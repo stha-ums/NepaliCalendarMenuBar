@@ -87,7 +87,9 @@ platform :mac do
       type: "appstore",
       readonly: true,
       additional_cert_types: ["mac_installer_distribution"],
-      api_key_path: "./app_store_connect_api_key.json"
+      api_key_path: "./app_store_connect_api_key.json",
+      keychain_name: ENV["CI"] ? "temp.keychain" : "login.keychain",
+      keychain_password: ENV["CI"] ? "actions" : ""
     )
 
     # Build and Archive with version injection
