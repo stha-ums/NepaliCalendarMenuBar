@@ -1,0 +1,6 @@
+git_url ENV["MATCH_GIT_URL"]
+storage_mode "git"
+type "development"
+platform "macos"
+app_identifier ["calendar.nepali.app"]
+username ENV["FASTLANE_USER"]

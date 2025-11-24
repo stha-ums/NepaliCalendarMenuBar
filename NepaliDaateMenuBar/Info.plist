@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleShortVersionString</key>
+	<string>0.4.0</string>
+	<key>CFBundleVersion</key>
+	<string>0.4.0</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.utilities</string>
+	<key>LSUIElement</key>
+	<true/>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>This app only needs to read your calendar events, not modify them.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>This app needs read-only access to view your calendar events in the Nepali calendar.</string>
+	<key>NSQuitAlwaysKeepsWindows</key>
+	<false/>
+</dict>
+</plist>

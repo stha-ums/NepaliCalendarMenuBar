@@ -1,0 +1,107 @@
+default_platform(:mac)
+
+platform :mac do
+  desc "Run tests"
+  lane :test do
+    run_tests(scheme: "NepaliDateMacMenuBar")
+  end
+
+  desc "Build for GitHub Release (Notarized)"
+  lane :build_github do
+    # Get version from Git tag
+    version = sh("git describe --tags --abbrev=0").strip.gsub('v', '')
+    
+    # Fetch certificates (read-only)
+    match(
+      type: "developer_id",
+      readonly: true,
+      keychain_name: ENV["CI"] ? "temp.keychain" : "login.keychain",
+      keychain_password: ENV["CI"] ? "actions" : ""
+    )
+
+    # Disable automatic code signing
+    disable_automatic_code_signing(
+      path: "NepaliDateMacMenuBar.xcodeproj"
+    )
+    
+    # Build and Archive with version injection
+    gym(
+      scheme: "NepaliDateMacMenuBar",
+      export_method: "developer-id",
+      export_options: "./ExportOptions_DevID.plist",
+      output_directory: "./output",
+      output_name: "NepaliDateMacMenuBar",
+      codesigning_identity: "Developer ID Application",
+      xcargs: "ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO MARKETING_VERSION=#{version} OTHER_CODE_SIGN_FLAGS='--timestamp'",
+      verbose: true
+    )
+
+    # Notarize using App Store Connect API
+    notarize(
+      package: "./output/NepaliDateMacMenuBar.app",
+      bundle_id: "calendar.nepali.app",
+      api_key_path: "./app_store_connect_api_key.json",
+      print_log: true
+    )
+
+    # Create DMG
+    sh "brew install create-dmg || true"
+    sh "cd .. && create-dmg \
+      --volname 'Nepali Date Mac Menu Bar' \
+      --window-pos 200 120 \
+      --window-size 600 400 \
+      --icon-size 100 \
+      --icon 'NepaliDateMacMenuBar.app' 175 190 \
+      --app-drop-link 425 190 \
+      --no-internet-enable \
+      'NepaliDateMacMenuBar.dmg' \
+      './output/NepaliDateMacMenuBar.app'"
+            
+    # Re-enable automatic code signing for local development
+    enable_automatic_code_signing(
+      path: "NepaliDateMacMenuBar.xcodeproj"
+    )
+  end
+
+  desc "Upload Metadata Only"
+  lane :upload_metadata do
+    # Fetch certificates (read-only)
+    match(type: "appstore", readonly: true)
+
+    deliver(
+      force: true, # Skip HTML report verification
+      skip_binary_upload: true,
+      metadata_path: "./fastlane/metadata",
+      screenshots_path: "./fastlane/screenshots",
+      platform: "osx"
+    )
+  end
+
+  desc "Release to App Store"
+  lane :release_appstore do
+    # Get version from Git tag
+    version = sh("git describe --tags --abbrev=0").strip.gsub('v', '')
+    
+    # Fetch certificates (read-only)
+    match(type: "appstore", readonly: true)
+
+    # Build and Archive with version injection
+    gym(
+      scheme: "NepaliDateMacMenuBar",
+      export_method: "app-store",
+      export_options: "./ExportOptions_AppStore.plist",
+      output_directory: "./output",
+      output_name: "NepaliDateMacMenuBar.pkg",
+      xcargs: "ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO MARKETING_VERSION=#{version}"
+    )
+
+    # Upload to App Store
+    deliver(
+      force: true, # Skip HTML report verification
+      pkg: "./output/NepaliDateMacMenuBar.pkg",
+      metadata_path: "./fastlane/metadata",
+      screenshots_path: "./fastlane/screenshots",
+      platform: "osx"
+    )
+  end
+end
