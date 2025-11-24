@@ -83,10 +83,9 @@ platform :mac do
     version = sh("git describe --tags --abbrev=0").strip.gsub('v', '')
     
     # Fetch certificates (read-only)
-    # Fetch certificates (read-only)
     match(
-      type: "appstore", 
-      readonly: true, 
+      type: "appstore",
+      readonly: false,
       additional_cert_types: ["mac_installer_distribution"]
     )
 
