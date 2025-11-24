@@ -16,5 +16,7 @@
 	<string>This app needs read-only access to view your calendar events in the Nepali calendar.</string>
 	<key>NSQuitAlwaysKeepsWindows</key>
 	<false/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>

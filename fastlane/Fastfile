@@ -110,7 +110,12 @@ platform :mac do
       screenshots_path: "./fastlane/screenshots",
       platform: "osx",
       api_key_path: "./app_store_connect_api_key.json",
-      precheck_include_in_app_purchases: false
+      precheck_include_in_app_purchases: false,
+      submit_for_review: true,
+      submission_information: {
+        export_compliance_uses_encryption: false,
+        add_id_info_uses_idfa: false
+      }
     )
   end
 end

@@ -10,5 +10,10 @@
 	<string>manual</string>
 	<key>teamID</key>
 	<string>4DRNCBN798</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>calendar.nepali.app</key>
+		<string>match AppStore calendar.nepali.app macos</string>
+	</dict>
 </dict>
 </plist>
