@@ -83,7 +83,12 @@ platform :mac do
     version = sh("git describe --tags --abbrev=0").strip.gsub('v', '')
     
     # Fetch certificates (read-only)
-    match(type: "appstore", readonly: true)
+    # Fetch certificates (read-only)
+    match(
+      type: "appstore", 
+      readonly: true, 
+      additional_cert_types: ["mac_installer_distribution"]
+    )
 
     # Build and Archive with version injection
     gym(
