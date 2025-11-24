@@ -48,18 +48,42 @@
 
 ## Download
 
-### Latest Release (v0.0.1)
+### Mac App Store (Recommended)
+
+<a href="https://apps.apple.com/app/id6738343894">
+<img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the Mac App Store" height="60">
+</a>
+
+**Price: $1.99** - Purchasing from the App Store supports the developer and ensures automatic updates.
+
+### GitHub (Free)
 
 **Direct Download:**
 
 [Latest Release](https://github.com/yourusername/NepaliDaateMenuBar/releases/latest) - Download the `.dmg` file
 
 **System Requirements:**
+
 - macOS 12.0 (Monterey) or later
 - **Universal Binary** - Works on both Apple Silicon (M1/M2/M3) and Intel Macs
 - ~10 MB disk space
 
-**Important**: This app is unsigned and not notarized. You'll need to bypass Gatekeeper on first launch (see installation instructions below).
+**Note**: The GitHub version is fully signed and notarized by Apple, so it will run securely on your Mac without any warnings.
+
+---
+
+## Support the Project
+
+The app is available for **$1.99 on the Mac App Store**.
+
+**Why pay?**
+
+- **Support Maintenance**: Helps cover the $99/year Apple Developer Program fee.
+- **Convenience**: One-click installation and automatic updates.
+- **Show Love**: A small way to say thanks if you find the app useful!
+
+**Free Forever**:
+The source code and manual builds will always be free here on GitHub.
 
 ---
 
@@ -73,36 +97,7 @@
 
 3. **Drag** the app to your Applications folder
 
-4. **Bypass Gatekeeper** (Required - app is not notarized):
-   
-   **For ALL warnings** (damaged, malware, unidentified developer):
-   
-   Open **Terminal** and run this command:
-   ```bash
-   xattr -cr "/Applications/NepaliDateMacMenuBar.app"
-   ```
-   
-   Then double-click the app to open normally.
-   
-   **What this does:**
-   - Removes the quarantine attribute macOS adds to downloaded apps
-   - Allows the unsigned app to run
-   - Only needs to be done once
-   
-   **Alternative method (if Terminal method doesn't work):**
-   ```bash
-   sudo spctl --master-disable
-   # Open the app
-   sudo spctl --master-enable
-   ```
-   ⚠️ This temporarily disables Gatekeeper system-wide. Re-enable it immediately after opening the app.
-
-5. **Grant Permissions** (Optional):
-   - Calendar access will be requested on first launch
-   - This allows viewing your events alongside Nepali dates
-   - You can grant or deny - the app works either way
-
-> **Note**: This app is not signed with an Apple Developer certificate. macOS will show a security warning on first launch. This is normal for non-notarized apps. Use the methods above to bypass Gatekeeper.
+4. **Launch** the app!
 
 ### First-Time Setup
 
@@ -125,6 +120,7 @@ Once installed, you'll see the Nepali date in your menu bar:
 ### Settings
 
 Access settings by:
+
 1. Click the menu bar icon
 2. Right-click on the app (or access via menu)
 3. Adjust:
@@ -132,8 +128,6 @@ Access settings by:
    - Date format
    - Launch on login
    - Calendar permissions
-
-
 
 ## Release Process
 
@@ -152,12 +146,14 @@ Use [Conventional Commits](https://www.conventionalcommits.org/):
 ### What Happens on Merge to Main
 
 GitHub Actions automatically:
+
 1. Determines version from commit messages
 2. Updates `Info.plist`
 3. Builds the app
 4. Creates DMG installer
 5. Generates changelog
 6. Creates GitHub release
+7. Uploads to App Store (on tag push)
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.
 
@@ -165,36 +161,14 @@ See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ## FAQ
 
-### Why does macOS say the app is "damaged" or "contains malware"?
+### Is the GitHub version safe?
 
-The app is **not** actually damaged or malicious. macOS shows these warnings for ANY unsigned app. Since this app is not signed with an Apple Developer certificate (costs $99/year), macOS blocks it with scary warnings.
-
-**Quick fix - Remove quarantine:**
-```bash
-xattr -cr "/Applications/NepaliDateMacMenuBar.app"
-```
-
-This removes the quarantine flag and allows the app to run.
-
-### Why does macOS block the app?
-
-This app is not signed or notarized with an Apple Developer certificate (which costs $99/year). macOS Gatekeeper blocks unsigned apps by default for security.
-
-### Is it safe to bypass Gatekeeper?
-
-Yes, if you trust the source. This is open-source software - you can review the code yourself. The app:
-- Doesn't require internet access
-- Only accesses your Calendar if you grant permission
-- Performs all date conversions locally
-- Doesn't collect or send any data
-
-### Do I need to bypass Gatekeeper every time?
-
-No, only on the first launch. After running `xattr -cr` or using the right-click method once, macOS remembers your choice.
+Yes! The GitHub release is **signed and notarized** with an Apple Developer ID. This means Apple has checked it for malware and verified it comes from the developer.
 
 ### Can I build it myself instead?
 
 Yes! Clone the repository and build with Xcode:
+
 ```bash
 git clone https://github.com/yourusername/NepaliDaateMenuBar.git
 cd NepaliDaateMenuBar
@@ -230,4 +204,3 @@ Licensed under **GNU General Public License v3.0** - see [LICENSE](LICENSE) file
 [Back to Top](#nepali-date-mac-menu-bar)
 
 </div>
-
