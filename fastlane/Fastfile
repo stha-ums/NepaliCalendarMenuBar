@@ -85,8 +85,9 @@ platform :mac do
     # Fetch certificates (read-only)
     match(
       type: "appstore",
-      readonly: false,
-      additional_cert_types: ["mac_installer_distribution"]
+      readonly: true,
+      additional_cert_types: ["mac_installer_distribution"],
+      api_key_path: "./app_store_connect_api_key.json"
     )
 
     # Build and Archive with version injection
@@ -95,7 +96,7 @@ platform :mac do
       export_method: "app-store",
       export_options: "./ExportOptions_AppStore.plist",
       output_directory: "./output",
-      output_name: "NepaliDateMacMenuBar.pkg",
+      output_name: "NepaliDateMacMenuBar",
       xcargs: "ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO MARKETING_VERSION=#{version}"
     )
 
@@ -105,7 +106,9 @@ platform :mac do
       pkg: "./output/NepaliDateMacMenuBar.pkg",
       metadata_path: "./fastlane/metadata",
       screenshots_path: "./fastlane/screenshots",
-      platform: "osx"
+      platform: "osx",
+      api_key_path: "./app_store_connect_api_key.json",
+      precheck_include_in_app_purchases: false
     )
   end
 end

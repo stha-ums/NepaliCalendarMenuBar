@@ -21,6 +21,23 @@ jobs:
           ruby-version: '3.1'
           bundler-cache: true
 
+      - name: Setup App Store Connect API Key
+        run: |
+          jq -n \
+            --arg key_id "${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}" \
+            --arg issuer_id "${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}" \
+            --arg key "${{ secrets.APP_STORE_CONNECT_API_PRIVATE_KEY }}" \
+            '{key_id: $key_id, issuer_id: $issuer_id, key: $key}' \
+            > app_store_connect_api_key.json
+
+      - name: Setup Keychain
+        run: |
+          # Create a temporary keychain
+          security create-keychain -p actions temp.keychain
+          security default-keychain -s temp.keychain
+          security unlock-keychain -p actions temp.keychain
+          security set-keychain-settings -t 3600 -u temp.keychain
+
       - name: Build and Upload
         env:
           MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
