@@ -1,4 +1,4 @@
-name: Release (App Store)
+name: Release (TestFlight)
 
 on:
   push:
@@ -38,7 +38,7 @@ jobs:
           security unlock-keychain -p actions temp.keychain
           security set-keychain-settings -t 3600 -u temp.keychain
 
-      - name: Build and Upload
+      - name: Build and Upload to TestFlight
         env:
           MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
@@ -50,4 +50,5 @@ jobs:
           # Generate MATCH_GIT_BASIC_AUTHORIZATION from PAT
           export MATCH_GIT_BASIC_AUTHORIZATION=$(echo -n "stha-ums:${{ secrets.PAT }}" | base64)
           
-          bundle exec fastlane release_appstore
+          bundle exec fastlane release_testflight
+

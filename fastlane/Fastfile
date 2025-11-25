@@ -113,4 +113,39 @@ platform :mac do
       precheck_include_in_app_purchases: false 
     )
   end
+
+  desc "Release to TestFlight"
+  lane :release_testflight do
+    # Get version from Git tag
+    version = sh("git describe --tags --abbrev=0").strip.gsub('v', '')
+    
+    # Fetch certificates (read-only)
+    match(
+      type: "appstore",
+      readonly: true,
+      additional_cert_types: ["mac_installer_distribution"],
+      api_key_path: "./app_store_connect_api_key.json",
+      keychain_name: ENV["CI"] ? "temp.keychain" : "login.keychain",
+      keychain_password: ENV["CI"] ? "actions" : ""
+    )
+
+    # Build and Archive with version injection
+    gym(
+      scheme: "NepaliDateMacMenuBar",
+      export_method: "app-store",
+      export_options: "./ExportOptions_AppStore.plist",
+      output_directory: "./output",
+      output_name: "NepaliDateMacMenuBar",
+      xcargs: "ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO MARKETING_VERSION=#{version}"
+    )
+
+    # Upload to TestFlight only (skip review submission)
+    upload_to_testflight(
+      pkg: "./output/NepaliDateMacMenuBar.pkg",
+      api_key_path: "./app_store_connect_api_key.json",
+      skip_submission: true,  # Don't submit for review
+      skip_waiting_for_build_processing: false,  # Wait for processing
+      platform: "osx"
+    )
+  end
 end
