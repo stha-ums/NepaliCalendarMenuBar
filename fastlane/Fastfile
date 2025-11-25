@@ -129,6 +129,11 @@ platform :mac do
       keychain_password: ENV["CI"] ? "actions" : ""
     )
 
+    # Increment build number automatically
+    increment_build_number(
+      xcodeproj: "NepaliDateMacMenuBar.xcodeproj"
+    )
+
     # Build and Archive with version injection
     gym(
       scheme: "NepaliDateMacMenuBar",
