@@ -85,8 +85,8 @@ struct NepaliCalendarView: View {
             selectedDate = currentNepaliDate
             loadEvents()
         }
-        .onChange(of: currentDate) { _, _ in loadEvents() }
-        .onChange(of: viewMode) { _, _ in loadEvents() }
+        .onChange(of: currentDate) { _ in loadEvents() }
+        .onChange(of: viewMode) { _ in loadEvents() }
     }
     
     // MARK: - Header
