@@ -1,12 +1,14 @@
 Stay connected to the Nepali calendar right from your macOS menu bar.
 
-Nepali Date Mac Menu Bar is a beautiful, lightweight utility designed to make viewing and converting Bikram Sambat (BS) dates seamless on your Mac. Whether you need to check today's Nepali date at a glance or convert an English (AD) date to Nepali (BS), this app has you covered.
+Nepali Date Mac Menu Bar is a beautiful, lightweight utility designed to make viewing Bikram Sambat (BS) dates seamless on your Mac. Whether you need to check today's Nepali date at a glance or plan around important dates, this app has you covered.
 
 Key Features:
 *   Menu Bar Access: See the current Nepali date, day, and month instantly in your menu bar.
-*   Interactive Calendar: Click to view a full monthly calendar with Tithis and important events.
-*   Date Converter: Easily convert dates between Bikram Sambat (BS) and Gregorian (AD) formats.
-*   Today Widget: Quick access to today's date and upcoming events.
+*   Interactive Calendar: Click to view a full monthly calendar with upcoming events.
+*   Calendar Integration: View your macOS Calendar events displayed with Nepali dates.
+*   Multiple Views: Switch between monthly grid and timeline schedule modes.
+*   Multi-Language Support: Choose between English and Nepali (नेपाली) with proper numerals.
+*   Customizable Display: Select from short, long, or full date format options.
 *   Offline & Private: Works completely offline with no data collection. Your privacy is guaranteed.
 *   Open Source: Fully open-source and transparent.
 
