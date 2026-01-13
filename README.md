@@ -54,7 +54,7 @@
 <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the Mac App Store" height="60">
 </a>
 
-**Price: $1.99** - Purchasing from the App Store supports the developer and ensures automatic updates.
+**Price: FREE** - Get automatic updates and easy installation directly from the App Store.
 
 ### GitHub (Free)
 
@@ -74,16 +74,21 @@
 
 ## Support the Project
 
-The app is available for **$1.99 on the Mac App Store**.
+The app is now **completely FREE** on both the Mac App Store and GitHub!
 
-**Why pay?**
+**Why download from the App Store?**
 
-- **Support Maintenance**: Helps cover the $99/year Apple Developer Program fee.
-- **Convenience**: One-click installation and automatic updates.
-- **Show Love**: A small way to say thanks if you find the app useful!
+- **Automatic Updates**: Get the latest features and bug fixes automatically.
+- **Easy Installation**: One-click installation, no manual setup required.
+- **Verified & Trusted**: Directly from Apple's official store.
 
-**Free Forever**:
-The source code and manual builds will always be free here on GitHub.
+**Want to support development?**
+
+If you find this app useful, please:
+- ⭐ Star this repository on GitHub
+- 📝 Leave a review on the Mac App Store
+- 🐛 Report bugs or suggest features via [Issues](https://github.com/yourusername/NepaliDaateMenuBar/issues)
+- 💻 Contribute code or improvements via pull requests
 
 ---
 
