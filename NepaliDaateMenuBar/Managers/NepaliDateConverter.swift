@@ -126,6 +126,9 @@ class NepaliDateConverter {
     
     /// Convert Gregorian date components to Nepali date
     /// Algorithm: Find approximate BS year, get anchor point, calculate day difference
+    /// 
+    /// Key fix: Handles dates before Baisakh 1 correctly by using previous year's data
+    /// Example: Jan 13, 2026 is before Baisakh 1, 2083 (Apr 14, 2026), so it belongs to BS 2082
     static func convertToNepali(year: Int, month: Int, day: Int) -> NepaliDate? {
         // Approximate BS year (AD year + 57)
         let approximateBSYear = year + 57
@@ -143,19 +146,32 @@ class NepaliDateConverter {
             return nil
         }
         
-        // Calculate day difference
+        // Calculate day difference from anchor
         let calendar = Calendar.current
         let daysDiff = calendar.dateComponents([.day], from: anchorDate, to: targetDate).day ?? 0
         
-        // Start from Baisakh 1
-        var bsMonth = 1
-        var bsDay = 1
-        var remainingDays = daysDiff
-        
-        if remainingDays >= 0 {
-            // Forward from anchor
+        // Check if target date is before anchor (belongs to previous BS year)
+        if daysDiff < 0 {
+            let prevBSYear = approximateBSYear - 1
+            guard let prevYearData = calendarData[prevBSYear] else {
+                return nil
+            }
+            
+            // Get anchor for previous year
+            let prevAnchor = prevYearData.firstBaisakh
+            guard let prevAnchorDate = dateFromComponents(year: prevAnchor.year, month: prevAnchor.month, day: prevAnchor.day) else {
+                return nil
+            }
+            
+            let daysDiffFromPrevAnchor = calendar.dateComponents([.day], from: prevAnchorDate, to: targetDate).day ?? 0
+            
+            // Calculate date within previous year
+            var bsMonth = 1
+            var bsDay = 1
+            var remainingDays = daysDiffFromPrevAnchor
+            
             while remainingDays > 0 {
-                let daysInMonth = yearData.daysInMonths[bsMonth - 1]
+                let daysInMonth = prevYearData.daysInMonths[bsMonth - 1]
                 let remainingInMonth = daysInMonth - bsDay + 1
                 
                 if remainingDays >= remainingInMonth {
@@ -164,42 +180,40 @@ class NepaliDateConverter {
                     bsDay = 1
                     
                     if bsMonth > 12 {
-                        // Went into next year
-                        return convertToNepali(year: year, month: month, day: day - remainingDays)
+                        // Should not happen, but handle edge case
+                        return nil
                     }
                 } else {
                     bsDay += remainingDays
                     remainingDays = 0
                 }
             }
-        } else {
-            // Backward from anchor (previous BS year)
-            let prevBSYear = approximateBSYear - 1
-            guard let prevYearData = calendarData[prevBSYear] else {
-                return nil
-            }
-            
-            bsMonth = 12
-            bsDay = prevYearData.daysInMonths[11]
-            remainingDays = abs(remainingDays)
-            
-            while remainingDays > 0 {
-                if bsDay > remainingDays {
-                    bsDay -= remainingDays
-                    remainingDays = 0
-                } else {
-                    remainingDays -= bsDay
-                    bsMonth -= 1
-                    
-                    if bsMonth < 1 {
-                        return nil
-                    }
-                    
-                    bsDay = prevYearData.daysInMonths[bsMonth - 1]
-                }
-            }
             
             return NepaliDate(year: prevBSYear, month: bsMonth, day: bsDay)
+        }
+        
+        // Forward from anchor (same BS year)
+        var bsMonth = 1
+        var bsDay = 1
+        var remainingDays = daysDiff
+        
+        while remainingDays > 0 {
+            let daysInMonth = yearData.daysInMonths[bsMonth - 1]
+            let remainingInMonth = daysInMonth - bsDay + 1
+            
+            if remainingDays >= remainingInMonth {
+                remainingDays -= remainingInMonth
+                bsMonth += 1
+                bsDay = 1
+                
+                if bsMonth > 12 {
+                    // Went into next year - should not happen with correct data
+                    return nil
+                }
+            } else {
+                bsDay += remainingDays
+                remainingDays = 0
+            }
         }
         
         return NepaliDate(year: approximateBSYear, month: bsMonth, day: bsDay)
