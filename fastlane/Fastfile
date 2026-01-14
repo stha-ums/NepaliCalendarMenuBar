@@ -55,7 +55,7 @@ platform :mac do
       --app-drop-link 425 190 \
       --no-internet-enable \
       'NepaliDateMacMenuBar.dmg' \
-      './output/NepaliDateMacMenuBar.app'"
+      './output/'"
       
     # Generate Sparkle Appcast
     UI.message("Generating Sparkle Appcast using Apple Code Signing...")
@@ -145,9 +145,18 @@ platform :mac do
       keychain_password: ENV["CI"] ? "actions" : ""
     )
 
-    # Increment build number automatically
+    # Get the latest build number from App Store Connect for this version
+    latest_build = latest_testflight_build_number(
+      version: version,
+      app_identifier: "calendar.nepali.app",
+      api_key_path: "./app_store_connect_api_key.json",
+      platform: "osx"
+    )
+    
+    # Set build number to latest + 1
     increment_build_number(
-      xcodeproj: "NepaliDateMacMenuBar.xcodeproj"
+      xcodeproj: "NepaliDateMacMenuBar.xcodeproj",
+      build_number: latest_build + 1
     )
 
     # Build and Archive with version injection
