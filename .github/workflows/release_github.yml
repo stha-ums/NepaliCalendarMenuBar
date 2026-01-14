@@ -40,6 +40,9 @@ jobs:
           security unlock-keychain -p actions temp.keychain
           security set-keychain-settings -t 3600 -u temp.keychain
 
+      - name: Install Sparkle
+        run: brew install sparkle
+
       - name: Build and Notarize
         env:
           MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
@@ -58,7 +61,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            NepaliDateMacMenuBar.dmg
+            output/NepaliDateMacMenuBar.dmg
+            output/appcast.xml
           draft: false
           prerelease: false
           generate_release_notes: true

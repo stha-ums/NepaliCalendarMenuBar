@@ -146,6 +146,11 @@ struct SettingsView: View {
                     }
                 }
                 
+                // Updates
+                OnboardingStyleSection(title: "UPDATES") {
+                    UpdatesSettingsRow()
+                }
+                
                 Spacer()
                 
                 // Development/Reset Section
@@ -342,5 +347,44 @@ struct FormatOptionRow: View {
         }
         .buttonStyle(.plain)
     }
+}
+
+struct UpdatesSettingsRow: View {
+    @ObservedObject private var updateManager = UpdateManager.shared
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+#if SPARKLE
+            Toggle(isOn: binding) {
+                Text("Automatically check for updates")
+                    .font(.system(size: 12))
+            }
+            .toggleStyle(.switch)
+            
+            Text("The app will automatically check for GitHub release updates.")
+                .font(.system(size: 9))
+                .foregroundColor(.secondary)
+#else
+            Toggle(isOn: $updateManager.isAppStoreCheckEnabled) {
+                Text("Notify about new versions")
+                    .font(.system(size: 12))
+            }
+            .toggleStyle(.switch)
+            
+            Text("The app will check the App Store for new versions on launch.")
+                .font(.system(size: 9))
+                .foregroundColor(.secondary)
+#endif
+        }
+    }
+    
+#if SPARKLE
+    private var binding: Binding<Bool> {
+        Binding(
+            get: { updateManager.automaticallyChecksForUpdates },
+            set: { updateManager.automaticallyChecksForUpdates = $0 }
+        )
+    }
+#endif
 }
 

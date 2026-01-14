@@ -18,5 +18,7 @@
 	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>SUFeedURL</key>
+	<string>https://github.com/stha-ums/NepaliCalendarMenuBar/releases/latest/download/appcast.xml</string>
 </dict>
 </plist>

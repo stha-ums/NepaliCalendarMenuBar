@@ -26,7 +26,7 @@ struct AboutView: View {
                     Text("Nepali Date Mac Menu Bar")
                         .font(.title2.weight(.bold))
                     
-                    Text("Version 0.0.1")
+                    Text("Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"))")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -132,7 +132,7 @@ struct AboutView: View {
                 Spacer()
                 
                 // Copyright
-                Text("© 2025 Nepali Date Mac Menu Bar\nAll rights reserved")
+                Text("© 2026 Nepali Date Mac Menu Bar\nAll rights reserved")
                     .font(.caption2)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
