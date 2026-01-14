@@ -46,7 +46,7 @@ platform :mac do
 
     # Create DMG
     sh "brew install create-dmg || true"
-    sh "cd .. && create-dmg \
+    sh "create-dmg \
       --volname 'Nepali Date Mac Menu Bar' \
       --window-pos 200 120 \
       --window-size 600 400 \
@@ -61,7 +61,7 @@ platform :mac do
     UI.message("Generating Sparkle Appcast using Apple Code Signing...")
     
     # Ensure the dmg is in the output folder for scanning
-    sh "mv ../NepaliDateMacMenuBar.dmg ./output/"
+    sh "mv ./NepaliDateMacMenuBar.dmg ./output/"
     
     # Run generate_appcast (installed via brew install sparkle)
     # Without --ed-key-file, Sparkle 2 defaults to Apple Code Signing verification
