@@ -170,16 +170,28 @@ See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 Yes! The GitHub release is **signed and notarized** with an Apple Developer ID. This means Apple has checked it for malware and verified it comes from the developer.
 
-### Can I build it myself instead?
+### Build from Source
 
-Yes! Clone the repository and build with Xcode:
+This project uses a proprietary core engine. To build it yourself:
 
-```bash
-git clone https://github.com/yourusername/NepaliDaateMenuBar.git
-cd NepaliDaateMenuBar
-open NepaliDateMacMenuBar.xcodeproj
-# Press Cmd+R to build and run
-```
+1. **Clone** the repository:
+   ```bash
+   git clone https://github.com/CalNep/NepaliDaateMenuBar.git
+   cd NepaliDaateMenuBar
+   ```
+
+2. **Fetch Dependencies**:
+   The core engine is hosted in a private repository. You will need a GitHub Personal Access Token (PAT) with `repo` scope to download the necessary binaries:
+   ```bash
+   export GITHUB_TOKEN=your_token_here
+   ./scripts/setup-dependencies.sh
+   ```
+
+3. **Open and Build**:
+   ```bash
+   open NepaliDateMacMenuBar.xcodeproj
+   # Press Cmd+R to build and run
+   ```
 
 ---
 

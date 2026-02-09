@@ -33,8 +33,8 @@ enum Constants {
     enum Grid {
         static let totalCells = 42
         static let daysPerWeek = 7
-        static let cellHeight: CGFloat = 40
-        static let gridSpacing: CGFloat = 2
+        static let cellHeight: CGFloat = 46
+        static let gridSpacing: CGFloat = 4
     }
     
     // MARK: - User Defaults Keys

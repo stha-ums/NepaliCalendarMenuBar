@@ -67,22 +67,61 @@ struct NepaliCalendarView: View {
             // Compact header
             headerView
                 .padding(.horizontal, 12)
-                .padding(.vertical, 10)
+                .padding(.top, 16)
+                .padding(.bottom, 10)
             
             Divider()
             
             // View mode content
             if viewMode == .month {
-                monthGridView
-                    .padding(8)
+                VStack(spacing: 0) {
+                    monthGridView
+                    
+                    Spacer()
+                    
+                    // Selected date info at the bottom left
+                    if let nepaliDate = displayedNepaliDate {
+                        HStack(alignment: .bottom) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack(alignment: .center, spacing: 8) {
+                                    Text(nepaliDate.fullFormattedDate(with: currentDate))
+                                        .font(.system(size: 16, weight: .bold))
+                                        .foregroundColor(.primary)
+                                    
+                                    if let tithi = NepaliDateConverter.getTithiName(for: currentDate) {
+                                        Text(tithi)
+                                            .font(.system(size: 10, weight: .bold))
+                                            .padding(.horizontal, 6)
+                                            .padding(.vertical, 2)
+                                            .background(Color.accentColor.opacity(0.1))
+                                            .foregroundColor(.accentColor)
+                                            .cornerRadius(6)
+                                    }
+                                }
+                                
+                                Text(formatFullGregorianDate(currentDate))
+                                    .font(.system(size: 11, weight: .medium))
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.leading, 16)
+                            .padding(.bottom, 20)
+                            
+                            Spacer()
+                        }
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
             } else {
                 // Use the new Agenda View
                 agendaView
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .onAppear {
-            selectedDate = currentNepaliDate
+        .task {
+            if selectedDate == nil {
+                selectedDate = currentNepaliDate
+            }
             loadEvents()
         }
         .onChange(of: currentDate) { _ in loadEvents() }
@@ -92,56 +131,30 @@ struct NepaliCalendarView: View {
     // MARK: - Header
     
     private var headerView: some View {
-        VStack(spacing: 8) {
-            if let nepaliDate = displayedNepaliDate {
-                Text(nepaliDate.formattedDate)
-                    .font(.body.weight(.semibold))
-                    .foregroundColor(.primary)
-            }
+        HStack(spacing: 12) {
+            // New custom view mode switcher
+            ViewModeSwitcher(selection: $viewMode)
             
-            HStack(spacing: 8) {
-                // View mode toggle
-                Picker("", selection: $viewMode) {
-                    Text("Month").tag(CalendarViewMode.month)
-                    // Renamed to Agenda
-                    Text("Agenda").tag(CalendarViewMode.agenda)
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .frame(width: 160)
-                
-                Spacer()
-                
+            Spacer()
+            
+            HStack(spacing: 10) {
                 if viewMode == .month {
-                    Button(action: previousPeriod) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 10, weight: .medium))
-                    }
-                    .buttonStyle(.plain)
+                    HeaderIconButton(icon: "chevron.left", action: previousPeriod)
                 }
                 
-                Button("Today") {
+                TodayButton {
                     currentDate = Date()
                     selectedDate = currentNepaliDate
                     
-                    // Scroll to top in Agenda view
                     if viewMode == .agenda {
                         withAnimation {
-                            // Scroll to the top anchor
                             scrollProxy?.scrollTo(agendaScrollAnchor, anchor: .top)
                         }
                     }
                 }
-                .font(.system(size: 10))
-                .buttonStyle(.bordered)
-                .controlSize(.mini)
                 
                 if viewMode == .month {
-                    Button(action: nextPeriod) {
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 10, weight: .medium))
-                    }
-                    .buttonStyle(.plain)
+                    HeaderIconButton(icon: "chevron.right", action: nextPeriod)
                 }
             }
         }
@@ -177,15 +190,31 @@ struct NepaliCalendarView: View {
                             events: getEvents(for: dayInfo.nepaliDate),
                             onSelect: {
                                 selectedDate = dayInfo.nepaliDate
+                                if let gDate = dayInfo.gregorianDate {
+                                    currentDate = gDate
+                                }
                             }
                         )
                     }
                 }
-                
-                // Selected day events
-                if let selected = selectedDate {
-                    selectedDayEventsView(for: selected)
-                }
+            }
+        }
+    }
+    
+    // MARK: - Info Chip (Helper)
+    
+    private struct InfoChip: View {
+        let title: String
+        let value: String
+        
+        var body: some View {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 8, weight: .bold))
+                    .foregroundColor(.secondary)
+                    .textCase(.uppercase)
+                Text(value)
+                    .font(.system(size: 11, weight: .medium))
             }
         }
     }
@@ -216,7 +245,8 @@ struct NepaliCalendarView: View {
                                     nepaliDate: nepaliDate,
                                     gregorianDate: day,
                                     isToday: Calendar.current.isDateInToday(day),
-                                    events: dayEvents
+                                    events: dayEvents,
+                                    tithiName: NepaliDateConverter.getTithiName(for: day)
                                 )
                                 .id(day) // Use the Date as the ID
                             }
@@ -246,13 +276,15 @@ struct NepaliCalendarView: View {
             Divider()
             
             HStack(alignment: .center, spacing: 6) {
-                Text(nepaliDate.formattedDate)
-                    .font(.subheadline.weight(.semibold))
-                
-                if let gregorianDate = NepaliDateConverter.convertNepaliToGregorian(nepaliDate: nepaliDate) {
-                    Text("(\(formatGregorianDate(gregorianDate)))")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(nepaliDate.fullFormattedDate(with: NepaliDateConverter.convertNepaliToGregorian(nepaliDate: nepaliDate)))
+                        .font(.subheadline.weight(.semibold))
+                    
+                    if let gregorianDate = NepaliDateConverter.convertNepaliToGregorian(nepaliDate: nepaliDate) {
+                        Text(formatFullGregorianDate(gregorianDate))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
                 
                 Spacer()
@@ -313,40 +345,7 @@ struct NepaliCalendarView: View {
     
     
     private func generateMonthGrid(for nepaliDate: NepaliDate) -> [CalendarDayInfo] {
-        var grid: [CalendarDayInfo] = []
-        
-        guard let yearData = NepaliDateConverter.calendarData[nepaliDate.year] else {
-            return grid
-        }
-        
-        let daysInMonth = yearData.daysInMonths[nepaliDate.month - 1]
-        
-        guard let firstDayGregorian = NepaliDateConverter.convertNepaliToGregorian(
-            nepaliDate: NepaliDate(year: nepaliDate.year, month: nepaliDate.month, day: 1)
-        ) else {
-            return grid
-        }
-        
-        let calendar = Calendar.current
-        let weekday = calendar.component(.weekday, from: firstDayGregorian)
-        let offset = (weekday - 1) % 7
-        
-        for _ in 0..<offset {
-            grid.append(CalendarDayInfo(nepaliDate: nil, gregorianDate: nil, isCurrentMonth: false))
-        }
-        
-        for day in 1...daysInMonth {
-            let dayNepaliDate = NepaliDate(year: nepaliDate.year, month: nepaliDate.month, day: day)
-            if let gregorianDate = NepaliDateConverter.convertNepaliToGregorian(nepaliDate: dayNepaliDate) {
-                grid.append(CalendarDayInfo(nepaliDate: dayNepaliDate, gregorianDate: gregorianDate, isCurrentMonth: true))
-            }
-        }
-        
-        while grid.count < Constants.Grid.totalCells {
-            grid.append(CalendarDayInfo(nepaliDate: nil, gregorianDate: nil, isCurrentMonth: false))
-        }
-        
-        return grid
+        return NepaliDateConverter.getMonthCalendarData(year: nepaliDate.year, month: nepaliDate.month)
     }
     
     private func getWeekStartDate() -> Date? {
@@ -414,9 +413,23 @@ struct NepaliCalendarView: View {
             var endDate: Date
             
             if viewMode == .month {
-                // Month view: load events for the visible month
-                startDate = calendar.date(from: calendar.dateComponents([.year, .month], from: currentDate)) ?? currentDate
-                endDate = calendar.date(byAdding: DateComponents(month: 1, day: 0), to: startDate) ?? currentDate
+                // Month view: load events for the visible BS month
+                // Use currentDate to get the BS month to ensure we always have a reference
+                if let nepaliDate = NepaliDateConverter.convertToNepali(gregorianDate: currentDate) {
+                    let grid = NepaliDateConverter.getMonthCalendarData(year: nepaliDate.year, month: nepaliDate.month)
+                    let visibleDates = grid.compactMap { $0.gregorianDate }
+    
+                    if let firstDate = visibleDates.first, let lastDate = visibleDates.last {
+                        startDate = calendar.startOfDay(for: firstDate)
+                        endDate = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: lastDate)) ?? lastDate
+                    } else {
+                        startDate = calendar.date(from: calendar.dateComponents([.year, .month], from: currentDate)) ?? currentDate
+                        endDate = calendar.date(byAdding: DateComponents(month: 1, day: 0), to: startDate) ?? currentDate
+                    }
+                } else {
+                    startDate = calendar.date(from: calendar.dateComponents([.year, .month], from: currentDate)) ?? currentDate
+                    endDate = calendar.date(byAdding: DateComponents(month: 1, day: 0), to: startDate) ?? currentDate
+                }
             } else {
                 // Agenda view: load events from Today up to 60 days in the future
                 startDate = calendar.startOfDay(for: Date())
@@ -434,6 +447,12 @@ struct NepaliCalendarView: View {
     private func formatGregorianDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
+        return formatter.string(from: date)
+    }
+    
+    private func formatFullGregorianDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .full
         return formatter.string(from: date)
     }
 }

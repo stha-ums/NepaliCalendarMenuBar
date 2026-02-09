@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct NepaliDate {
+struct NepaliDate: Equatable {
     let year: Int
     let month: Int
     let day: Int
@@ -55,6 +55,19 @@ struct NepaliDate {
         let monthStr = NumeralConverter.convert(String(format: "%02d", month), for: language)
         let dayStr = NumeralConverter.convert(String(format: "%02d", day), for: language)
         return "\(yearStr)/\(monthStr)/\(dayStr)"
+    }
+    
+    func weekdayName(for date: Date?) -> String {
+        guard let date = date else { return "" }
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: LanguageSettings.shared.language == .nepali ? "ne_NP" : "en_US")
+        formatter.dateFormat = "EEEE"
+        return formatter.string(from: date)
+    }
+    
+    func fullFormattedDate(with date: Date?) -> String {
+        let dayName = weekdayName(for: date)
+        return "\(formattedDate), \(dayName)"
     }
 }
 

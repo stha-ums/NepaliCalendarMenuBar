@@ -21,10 +21,10 @@ struct CompactDayCell: View {
         VStack(spacing: 2) {
             if let nepaliDate = dayInfo.nepaliDate {
                 Text(toNepaliNumerals(nepaliDate.day))
-                    .font(.callout.weight(isToday ? .bold : .regular))
+                    .font(.system(size: 14, weight: isToday ? .bold : .medium))
                     .foregroundColor(textColor)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 32)
+                    .frame(height: 34)
                     .background(cellBackground)
                 
                 // Event dots
@@ -36,10 +36,12 @@ struct CompactDayCell: View {
                                 .frame(width: 3, height: 3)
                         }
                     }
+                } else {
+                    Spacer().frame(height: 3)
                 }
             }
         }
-        .frame(height: 40)
+        .frame(height: 45)
         .contentShape(Rectangle())
         .onTapGesture {
             onSelect()
@@ -49,12 +51,13 @@ struct CompactDayCell: View {
     private var cellBackground: some View {
         ZStack {
             if isToday {
-                Circle()
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
                     .fill(Color.accentColor)
+                    .shadow(color: Color.accentColor.opacity(0.3), radius: 4, x: 0, y: 2)
             } else if isSelected {
-                Circle()
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
                     .stroke(Color.accentColor, lineWidth: 1.5)
-                    .background(Circle().fill(Color.accentColor.opacity(0.1)))
+                    .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Color.accentColor.opacity(0.1)))
             }
         }
     }
@@ -110,10 +113,16 @@ struct CompactEventRow: View {
             
             Spacer()
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
-        .background(Color(NSColor.controlBackgroundColor).opacity(0.3))
-        .cornerRadius(4)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(Color(NSColor.controlBackgroundColor).opacity(0.4))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(Color.primary.opacity(0.05), lineWidth: 0.5)
+        )
     }
     
     private func eventColor(_ event: EKEvent) -> Color {

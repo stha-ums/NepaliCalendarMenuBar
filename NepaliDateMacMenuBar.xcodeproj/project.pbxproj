@@ -7,11 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		33BC0DED2F1778E1009C25B3 /* BsCalendarCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33BC0DEC2F1778E1009C25B3 /* BsCalendarCore.xcframework */; };
 		33D079AF2F1778E1009C25B3 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 33D079AE2F1778E1009C25B3 /* Sparkle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		338DD69F2ECA475400360807 /* NepaliDateMacMenuBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NepaliDateMacMenuBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		33BC0DEC2F1778E1009C25B3 /* BsCalendarCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = BsCalendarCore.xcframework; path = NepaliDaateMenuBar/Frameworks/BsCalendarCore.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -27,6 +29,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				33BC0DED2F1778E1009C25B3 /* BsCalendarCore.xcframework in Frameworks */,
 				33D079AF2F1778E1009C25B3 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -38,6 +41,7 @@
 			isa = PBXGroup;
 			children = (
 				338DD6A12ECA475400360807 /* NepaliDaateMenuBar */,
+				33BC0DEB2F1778E1009C25B3 /* Frameworks */,
 				338DD6A02ECA475400360807 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -48,6 +52,14 @@
 				338DD69F2ECA475400360807 /* NepaliDateMacMenuBar.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		33BC0DEB2F1778E1009C25B3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				33BC0DEC2F1778E1009C25B3 /* BsCalendarCore.xcframework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -82,7 +94,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2600;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2601;
 				TargetAttributes = {
 					338DD69E2ECA475400360807 = {
 						CreatedOnToolsVersion = 26.0.1;
@@ -125,6 +137,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		33D079B12F1778E1009C25B5 /* Remove Sparkle if No SPARKLE Flag */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -289,13 +302,25 @@
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/NepaliDaateMenuBar/Frameworks",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/NepaliDaateMenuBar/Frameworks/BsCalendarCore.xcframework/macos-arm64_x86_64/Headers",
+				);
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "This app needs access to your calendar to display events in the Nepali calendar view.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/NepaliDaateMenuBar/Frameworks/BsCalendarCore.xcframework/macos-arm64_x86_64",
 				);
 				MARKETING_VERSION = 0.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = calendar.nepali.app;
@@ -305,8 +330,13 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "NepaliDaateMenuBar/NepaliDateMacMenuBar-Bridging-Header.h";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
+				USER_HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/NepaliDaateMenuBar/Frameworks/BsCalendarCore.xcframework/macos-arm64_x86_64/Headers",
+				);
 			};
 			name = Debug;
 		};
@@ -325,13 +355,25 @@
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/NepaliDaateMenuBar/Frameworks",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/NepaliDaateMenuBar/Frameworks/BsCalendarCore.xcframework/macos-arm64_x86_64/Headers",
+				);
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "This app needs access to your calendar to display events in the Nepali calendar view.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/NepaliDaateMenuBar/Frameworks/BsCalendarCore.xcframework/macos-arm64_x86_64",
 				);
 				MARKETING_VERSION = 0.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = calendar.nepali.app;
@@ -341,8 +383,13 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "NepaliDaateMenuBar/NepaliDateMacMenuBar-Bridging-Header.h";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
+				USER_HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/NepaliDaateMenuBar/Frameworks/BsCalendarCore.xcframework/macos-arm64_x86_64/Headers",
+				);
 			};
 			name = Release;
 		};
