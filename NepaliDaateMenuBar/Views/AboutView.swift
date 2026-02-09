@@ -26,7 +26,7 @@ struct AboutView: View {
                     Text("Nepali Date Mac Menu Bar")
                         .font(.title2.weight(.bold))
                     
-                    Text("Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"))")
+                    Text("Version \(Bundle.main.appVersion) (\(Bundle.main.buildNumber))")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -43,32 +43,6 @@ struct AboutView: View {
                         .font(.body)
                         .foregroundColor(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                
-                Divider()
-                
-                // Used Open Source Tools
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Used Open Source Tools")
-                        .font(.headline)
-                    
-                    VStack(alignment: .leading, spacing: 8) {
-                        Link(destination: URL(string: "https://github.com/SushilShrestha/pyBSDate")!) {
-                            HStack {
-                                Image(systemName: "link")
-                                Text("pyBSDate by Sushil Shrestha")
-                            }
-                            .font(.caption)
-                        }
-                        
-                        Text("Date conversion algorithm (MIT License)")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(12)
-                    .background(Color(NSColor.controlBackgroundColor).opacity(0.3))
-                    .cornerRadius(8)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -105,7 +79,7 @@ struct AboutView: View {
                         .font(.headline)
                     
                     VStack(spacing: 6) {
-                        Link(destination: URL(string: "https://github.com/yourusername/NepaliDateMacMenuBar")!) {
+                        Link(destination: URL(string: "https://github.com/stha-ums/NepaliCalendarMenuBar")!) {
                             HStack {
                                 Image(systemName: "chevron.left.forwardslash.chevron.right")
                                 Text("Source Code")
@@ -115,7 +89,7 @@ struct AboutView: View {
                             }
                         }
                         
-                        Link(destination: URL(string: "https://github.com/yourusername/NepaliDateMacMenuBar/issues")!) {
+                        Link(destination: URL(string: "https://github.com/stha-ums/NepaliCalendarMenuBar/issues")!) {
                             HStack {
                                 Image(systemName: "exclamationmark.bubble")
                                 Text("Report an Issue")
@@ -141,6 +115,17 @@ struct AboutView: View {
             .padding(.horizontal, 24)
         }
         .frame(width: Constants.Window.aboutWidth, height: Constants.Window.aboutHeight)
+    }
+}
+
+// MARK: - Bundle Extension
+extension Bundle {
+    var appVersion: String {
+        return infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
+    }
+    
+    var buildNumber: String {
+        return infoDictionary?["CFBundleVersion"] as? String ?? "1"
     }
 }
 

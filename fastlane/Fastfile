@@ -11,6 +11,9 @@ platform :mac do
     # Get version from Git tag
     version = sh("git describe --tags --abbrev=0").strip.gsub('v', '')
     
+    # Get build number from commit count
+    build_number = sh("git rev-list --count HEAD").strip
+
     # Fetch certificates (read-only)
     match(
       type: "developer_id",
@@ -32,7 +35,7 @@ platform :mac do
       output_directory: "./output",
       output_name: "NepaliDateMacMenuBar",
       codesigning_identity: "Developer ID Application",
-      xcargs: "ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO MARKETING_VERSION=#{version} OTHER_CODE_SIGN_FLAGS='--timestamp' OTHER_SWIFT_FLAGS='-D SPARKLE'",
+      xcargs: "ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO MARKETING_VERSION=#{version} CURRENT_PROJECT_VERSION=#{build_number} OTHER_CODE_SIGN_FLAGS='--timestamp' OTHER_SWIFT_FLAGS='-D SPARKLE'",
       verbose: true
     )
 

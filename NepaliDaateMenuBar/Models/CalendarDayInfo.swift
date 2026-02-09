@@ -12,5 +12,12 @@ struct CalendarDayInfo: Identifiable {
     let nepaliDate: NepaliDate?
     let gregorianDate: Date?
     let isCurrentMonth: Bool
+    
+    // Astronomical info
+    var tithiName: String?
+    var nakshatraName: String?
+    var rashiName: String?
+    var sunrise: String?
+    var sunset: String?
 }
 

@@ -15,6 +15,7 @@ struct AgendaDaySection: View {
     let gregorianDate: Date
     let isToday: Bool
     let events: [EKEvent]
+    let tithiName: String?
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -23,33 +24,42 @@ struct AgendaDaySection: View {
                 // Nepali day circle
                 VStack(spacing: 2) {
                     Text(nepaliDayOfWeekShort)
-                        .font(.system(size: 9, weight: .medium))
+                        .font(.system(size: 10, weight: .bold))
                         .foregroundColor(isToday ? .white : .secondary)
                     
                     Text(toNepaliNumerals(nepaliDate.day))
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.system(size: 18, weight: .bold))
                         .foregroundColor(isToday ? .white : .primary)
                 }
-                .frame(width: 42)
-                .padding(.vertical, 6)
-                .background(isToday ? Color.accentColor : Color.clear)
-                .clipShape(RoundedRectangle(cornerRadius: 20))
+                .frame(width: 44, height: 44)
+                .background(
+                    isToday ? 
+                    AnyView(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Color.accentColor)) : 
+                    AnyView(Color.clear)
+                )
+                .overlay(
+                    !isToday ? 
+                    AnyView(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.primary.opacity(0.1), lineWidth: 1)) : 
+                    AnyView(Color.clear)
+                )
                 
-                VStack(alignment: .leading, spacing: 3) {
-                    // Nepali date (primary)
-                    Text(nepaliDate.monthName)
-                        .font(.system(size: 12, weight: .semibold))
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        // Nepali date (primary)
+                        Text(nepaliDate.fullFormattedDate(with: gregorianDate))
+                            .font(.system(size: 14, weight: .bold))
+                        
+                        if let tithi = tithiName {
+                            Text(tithi)
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundColor(.accentColor)
+                        }
+                    }
                     
                     // Gregorian date (small, secondary)
-                    Text(gregorianDateString)
-                        .font(.system(size: 9))
+                    Text(gregorianFullDateString)
+                        .font(.system(size: 10))
                         .foregroundColor(.secondary)
-                    
-                    if events.count > 0 {
-                        Text("\(events.count) event\(events.count > 1 ? "s" : "")")
-                            .font(.system(size: 8))
-                            .foregroundColor(.accentColor)
-                    }
                 }
                 
                 Spacer()
@@ -80,9 +90,9 @@ struct AgendaDaySection: View {
         return days[weekday - 1]
     }
     
-    private var gregorianDateString: String {
+    private var gregorianFullDateString: String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "MMM d, yyyy"
+        formatter.dateStyle = .full
         return formatter.string(from: gregorianDate)
     }
     
@@ -118,31 +128,36 @@ struct AgendaEventRow: View {
             // Event card
             HStack(spacing: 8) {
                 // Color indicator
-                Rectangle()
+                RoundedRectangle(cornerRadius: 2)
                     .fill(eventColor(event))
-                    .frame(width: 3)
+                    .frame(width: 4)
                 
                 // Event info
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text(event.title)
-                        .font(.system(size: 11, weight: .medium))
-                        .lineLimit(1)
+                        .font(.system(size: 12, weight: .semibold))
+                        .lineLimit(2)
                     
                     if let startDate = event.startDate, let endDate = event.endDate {
-                        Text("\(startDate, style: .time) - \(endDate, style: .time)")
-                            .font(.system(size: 9))
-                            .foregroundColor(.secondary)
+                        HStack(spacing: 4) {
+                            Image(systemName: "clock")
+                                .font(.system(size: 9))
+                            Text("\(startDate, style: .time) - \(endDate, style: .time)")
+                                .font(.system(size: 10))
+                        }
+                        .foregroundColor(.secondary)
                     }
                 }
                 
                 Spacer()
             }
-            .padding(8)
-            .background(eventColor(event).opacity(0.08))
-            .cornerRadius(6)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(eventColor(event).opacity(0.1))
+            .cornerRadius(12)
             .overlay(
-                RoundedRectangle(cornerRadius: 6)
-                    .stroke(eventColor(event).opacity(0.2), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(eventColor(event).opacity(0.15), lineWidth: 1)
             )
         }
     }

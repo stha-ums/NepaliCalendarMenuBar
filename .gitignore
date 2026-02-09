@@ -139,4 +139,7 @@ Temporary Items
 # App specific
 *.log
 
+# Proprietary Frameworks
+NepaliDaateMenuBar/Frameworks/
+
 app_store_connect_api_key.json
