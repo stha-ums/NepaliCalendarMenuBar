@@ -46,7 +46,11 @@ jobs:
           security set-keychain-settings -t 3600 -u temp.keychain
 
       - name: Install Sparkle
-        run: brew install sparkle
+        run: |
+          brew install sparkle
+          # Add Sparkle's bin to GITHUB_PATH to make generate_appcast available
+          SPARKLE_BIN=$(brew --prefix --caskroom 2>/dev/null || echo "/opt/homebrew/Caskroom")/sparkle/*/bin
+          echo "$SPARKLE_BIN" >> $GITHUB_PATH
 
       - name: Build and Notarize
         env:

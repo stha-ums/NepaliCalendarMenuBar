@@ -60,14 +60,28 @@ platform :mac do
       '../output/NepaliDateMacMenuBar.dmg' \
       '../output/'"
       
-    # Run generate_appcast (installed via brew install sparkle)
-    # Without --ed-key-file, Sparkle 2 defaults to Apple Code Signing verification
-    # We find the tool path using brew --prefix
-    sparkle_bin = "#{`brew --prefix sparkle`.strip}/bin/generate_appcast"
-    if File.exist?(sparkle_bin)
+    # Find generate_appcast tool
+    sparkle_bin = nil
+    
+    # 1. Check if it's already in PATH (GHA runner path)
+    if system("which generate_appcast > /dev/null")
+      sparkle_bin = "generate_appcast"
+    # 2. Check Sparkle 2 'sparkle' CLI
+    elsif system("which sparkle > /dev/null")
+      sparkle_bin = "sparkle generate-appcast"
+    # 3. Try to find in Caskroom (robust fallback)
+    else
+      caskroom_path = `brew --prefix --caskroom 2>/dev/null`.strip
+      caskroom_path = "/opt/homebrew/Caskroom" if caskroom_path.empty?
+      
+      matches = Dir.glob("#{caskroom_path}/sparkle/*/bin/generate_appcast")
+      sparkle_bin = matches.last if matches.any?
+    end
+
+    if sparkle_bin
       sh "#{sparkle_bin} ../output/"
     else
-      sh "generate_appcast ../output/"
+      UI.error("Could not find Sparkle's appcast generation tool. Skipping appcast generation.")
     end
 
     # Re-enable automatic code signing for local development
