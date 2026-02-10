@@ -15,6 +15,7 @@ struct CompactDayCell: View {
     let isToday: Bool
     let isSelected: Bool
     let events: [EKEvent]
+    @Binding var selectedEvent: EKEvent?
     let onSelect: () -> Void
     
     var body: some View {
@@ -32,7 +33,7 @@ struct CompactDayCell: View {
                     HStack(spacing: 2) {
                         ForEach(Array(events.prefix(2).enumerated()), id: \.offset) { _, event in
                             Circle()
-                                .fill(eventColor(event))
+                                .fill(event.swiftUIColor)
                                 .frame(width: 3, height: 3)
                         }
                     }
@@ -75,60 +76,57 @@ struct CompactDayCell: View {
     private func toNepaliNumerals(_ number: Int) -> String {
         NumeralConverter.convert(number, for: LanguageSettings.shared.language)
     }
-    
-    private func eventColor(_ event: EKEvent) -> Color {
-        if let calendar = event.calendar {
-            return Color(calendar.color)
-        }
-        return Color.blue
-    }
 }
 
 // MARK: - Compact Event Row
 
 struct CompactEventRow: View {
     let event: EKEvent
+    let onSelect: () -> Void
+    
+    @State private var isHovered = false
     
     var body: some View {
-        HStack(spacing: 6) {
-            Rectangle()
-                .fill(eventColor(event))
-                .frame(width: 2)
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text(event.title)
-                    .font(.system(size: 10, weight: .medium))
-                    .lineLimit(1)
+        Button(action: onSelect) {
+            HStack(spacing: 6) {
+                Rectangle()
+                    .fill(event.swiftUIColor)
+                    .frame(width: 2)
                 
-                if let startDate = event.startDate {
-                    HStack(spacing: 3) {
-                        Image(systemName: "clock")
-                            .font(.system(size: 8))
-                        Text(startDate, style: .time)
-                            .font(.system(size: 9))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(event.title)
+                        .font(.system(size: 10, weight: .medium))
+                        .lineLimit(1)
+                    
+                    if let startDate = event.startDate {
+                        HStack(spacing: 3) {
+                            Image(systemName: "clock")
+                                .font(.system(size: 8))
+                            Text(startDate, style: .time)
+                                .font(.system(size: 9))
+                        }
+                        .foregroundColor(.secondary)
                     }
-                    .foregroundColor(.secondary)
                 }
+                
+                Spacer()
             }
-            
-            Spacer()
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(Color(NSColor.controlBackgroundColor).opacity(isHovered ? 0.7 : 0.4))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .stroke(Color.primary.opacity(isHovered ? 0.15 : 0.05), lineWidth: 0.5)
+            )
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
-        .background(
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .fill(Color(NSColor.controlBackgroundColor).opacity(0.4))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(Color.primary.opacity(0.05), lineWidth: 0.5)
-        )
-    }
-    
-    private func eventColor(_ event: EKEvent) -> Color {
-        if let calendar = event.calendar {
-            return Color(calendar.color)
+        .buttonStyle(.plain)
+        .scaleEffect(isHovered ? 1.02 : 1.0)
+        .animation(.spring(response: 0.2, dampingFraction: 0.7), value: isHovered)
+        .onHover { hovering in
+            isHovered = hovering
         }
-        return Color.blue
     }
 }
