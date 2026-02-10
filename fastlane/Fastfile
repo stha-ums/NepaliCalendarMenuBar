@@ -69,7 +69,7 @@ platform :mac do
     # 2. Check Sparkle 2 'sparkle' CLI
     elsif system("which sparkle > /dev/null")
       sparkle_bin = "sparkle generate-appcast"
-    # 3. Try to find in Caskroom (robust fallback)
+    # 3. Try to find in Caskroom (robust fallback for local machines)
     else
       caskroom_path = `brew --prefix --caskroom 2>/dev/null`.strip
       caskroom_path = "/opt/homebrew/Caskroom" if caskroom_path.empty?
@@ -79,7 +79,9 @@ platform :mac do
     end
 
     if sparkle_bin
-      sh "#{sparkle_bin} ../output/"
+      # Using absolute path for output to be safe in CI
+      output_abs_path = File.expand_path('../output/')
+      sh "#{sparkle_bin} \"#{output_abs_path}\""
     else
       UI.error("Could not find Sparkle's appcast generation tool. Skipping appcast generation.")
     end
