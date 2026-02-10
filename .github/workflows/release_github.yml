@@ -48,11 +48,11 @@ jobs:
       - name: Install Sparkle Tools
         run: |
           VERSION=$(curl -s https://api.github.com/repos/sparkle-project/Sparkle/releases/latest | jq -r .tag_name)
-          curl -L -o Sparkle-Tools.tar.xz "https://github.com/sparkle-project/Sparkle/releases/download/$VERSION/Sparkle-$VERSION-Tools.tar.xz"
+          curl -L -o Sparkle.tar.xz "https://github.com/sparkle-project/Sparkle/releases/download/$VERSION/Sparkle-$VERSION.tar.xz"
           mkdir sparkle-tools
-          tar -xf Sparkle-Tools.tar.xz -C sparkle-tools
-          # Add the absolute path to GITHUB_PATH
-          echo "$(pwd)/sparkle-tools" >> $GITHUB_PATH
+          tar -xf Sparkle.tar.xz -C sparkle-tools
+          # Add the bin directory to GITHUB_PATH
+          echo "$(pwd)/sparkle-tools/bin" >> $GITHUB_PATH
 
       - name: Build and Notarize
         env:
