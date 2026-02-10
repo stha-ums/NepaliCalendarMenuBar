@@ -16,6 +16,7 @@ struct AgendaDaySection: View {
     let isToday: Bool
     let events: [EKEvent]
     let tithiName: String?
+    let onEventSelect: (EKEvent) -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -71,9 +72,10 @@ struct AgendaDaySection: View {
             // Events
             if !events.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
-                    ForEach(Array(sortedEvents.enumerated()), id: \.offset) { _, event in
-                        // Use the renamed struct
-                        AgendaEventRow(event: event)
+                    ForEach(Array(sortedEvents.enumerated()), id: \.offset) { index, event in
+                        AgendaEventRow(event: event) {
+                            onEventSelect(event)
+                        }
                     }
                 }
                 .padding(.leading, 12)
@@ -105,8 +107,19 @@ struct AgendaDaySection: View {
         return String(number).map { numeralMap[$0] ?? String($0) }.joined()
     }
     
+    
     private var sortedEvents: [EKEvent] {
-        events.sorted { $0.startDate < $1.startDate }
+        // Deduplicate events by their ID to prevent ForEach crashes
+        var seen = Set<String>()
+        let uniqueEvents = events.filter { event in
+            let id = event.id
+            if seen.contains(id) {
+                return false
+            }
+            seen.insert(id)
+            return true
+        }
+        return uniqueEvents.sorted { $0.startDate < $1.startDate }
     }
 }
 
@@ -114,6 +127,9 @@ struct AgendaDaySection: View {
 
 struct AgendaEventRow: View {
     let event: EKEvent
+    let onSelect: () -> Void
+    
+    @State private var isHovered = false
     
     var body: some View {
         HStack(spacing: 10) {
@@ -125,47 +141,50 @@ struct AgendaEventRow: View {
                     .frame(width: 50, alignment: .leading)
             }
             
-            // Event card
-            HStack(spacing: 8) {
-                // Color indicator
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(eventColor(event))
-                    .frame(width: 4)
-                
-                // Event info
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(event.title)
-                        .font(.system(size: 12, weight: .semibold))
-                        .lineLimit(2)
+            Button(action: onSelect) {
+                HStack(spacing: 8) {
+                    // Color indicator
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(event.swiftUIColor)
+                        .frame(width: 4)
                     
-                    if let startDate = event.startDate, let endDate = event.endDate {
-                        HStack(spacing: 4) {
-                            Image(systemName: "clock")
-                                .font(.system(size: 9))
-                            Text("\(startDate, style: .time) - \(endDate, style: .time)")
-                                .font(.system(size: 10))
+                    // Event info
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(event.title)
+                            .font(.system(size: 12, weight: .semibold))
+                            .lineLimit(2)
+                        
+                        if let startDate = event.startDate, let endDate = event.endDate {
+                            HStack(spacing: 4) {
+                                Image(systemName: "clock")
+                                    .font(.system(size: 9))
+                                Text("\(startDate, style: .time) - \(endDate, style: .time)")
+                                    .font(.system(size: 10))
+                            }
+                            .foregroundColor(.secondary)
                         }
-                        .foregroundColor(.secondary)
                     }
+                    
+                    Spacer()
                 }
-                
-                Spacer()
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .background(
+                    event.swiftUIColor
+                        .opacity(isHovered ? 0.2 : 0.1)
+                )
+                .cornerRadius(12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(event.swiftUIColor.opacity(isHovered ? 0.3 : 0.15), lineWidth: 1)
+                )
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 10)
-            .background(eventColor(event).opacity(0.1))
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(eventColor(event).opacity(0.15), lineWidth: 1)
-            )
+            .buttonStyle(.plain)
+            .scaleEffect(isHovered ? 1.01 : 1.0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isHovered)
+            .onHover { hovering in
+                isHovered = hovering
+            }
         }
-    }
-    
-    private func eventColor(_ event: EKEvent) -> Color {
-        if let calendar = event.calendar {
-            return Color(calendar.color)
-        }
-        return Color.blue
     }
 }

@@ -41,9 +41,9 @@ platform :mac do
 
     # Notarize using App Store Connect API
     notarize(
-      package: "./output/NepaliDateMacMenuBar.app",
+      package: "../output/NepaliDateMacMenuBar.app",
       bundle_id: "calendar.nepali.app",
-      api_key_path: "./app_store_connect_api_key.json",
+      api_key_path: "../app_store_connect_api_key.json",
       print_log: true
     )
 
@@ -58,22 +58,22 @@ platform :mac do
       --app-drop-link 425 190 \
       --no-internet-enable \
       'NepaliDateMacMenuBar.dmg' \
-      './output/'"
+      '../output/'"
       
     # Generate Sparkle Appcast
     UI.message("Generating Sparkle Appcast using Apple Code Signing...")
     
     # Ensure the dmg is in the output folder for scanning
-    sh "mv ./NepaliDateMacMenuBar.dmg ./output/"
+    sh "mv ./NepaliDateMacMenuBar.dmg ../output/"
     
     # Run generate_appcast (installed via brew install sparkle)
     # Without --ed-key-file, Sparkle 2 defaults to Apple Code Signing verification
     # We find the tool path using brew --prefix
     sparkle_bin = "#{`brew --prefix sparkle`.strip}/bin/generate_appcast"
     if File.exist?(sparkle_bin)
-      sh "#{sparkle_bin} ./output/"
+      sh "#{sparkle_bin} ../output/"
     else
-      sh "generate_appcast ./output/"
+      sh "generate_appcast ../output/"
     end
 
     # Re-enable automatic code signing for local development

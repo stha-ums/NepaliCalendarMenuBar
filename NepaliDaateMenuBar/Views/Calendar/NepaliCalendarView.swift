@@ -15,6 +15,8 @@ struct NepaliCalendarView: View {
     @State private var events: [EKEvent] = []
     @State private var viewMode: CalendarViewMode = .month
     @State private var scrollProxy: ScrollViewProxy? = nil
+    @State private var selectedEvent: EKEvent?
+    @State private var pendingEvent: EKEvent? // For robust swapping
     
     // Removed unused state:
     // @State private var scheduleStartOffset: Int = Constants.Schedule.initialPastDays
@@ -75,7 +77,7 @@ struct NepaliCalendarView: View {
             // View mode content
             if viewMode == .month {
                 VStack(spacing: 0) {
-                    monthGridView
+                    monthGridView(selectedEvent: $selectedEvent)
                     
                     Spacer()
                     
@@ -114,10 +116,27 @@ struct NepaliCalendarView: View {
                 .padding(.vertical, 10)
             } else {
                 // Use the new Agenda View
-                agendaView
+                agendaView(selectedEvent: $selectedEvent)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .popover(item: $selectedEvent, arrowEdge: .trailing) { event in
+            EventDetailPopup(event: event, onClose: {
+                selectedEvent = nil
+            })
+            .onDisappear {
+                // If we have a pending event from a swap, trigger it now that
+                // the previous popover has fully finished its dismissal
+                if let nextEvent = pendingEvent {
+                    pendingEvent = nil
+                    // Small delay helps ensure SwiftUI's state machine is ready
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                        self.selectedEvent = nextEvent
+                    }
+                }
+            }
+            .padding(8) // Add some padding for the popover
+        }
         .task {
             if selectedDate == nil {
                 selectedDate = currentNepaliDate
@@ -162,7 +181,7 @@ struct NepaliCalendarView: View {
     
     // MARK: - Month Grid View
     
-    private var monthGridView: some View {
+    private func monthGridView(selectedEvent: Binding<EKEvent?>) -> some View {
         VStack(spacing: 0) {
             // Weekday headers
             HStack(spacing: 0) {
@@ -188,6 +207,7 @@ struct NepaliCalendarView: View {
                             isToday: isToday(dayInfo.nepaliDate),
                             isSelected: isSelected(dayInfo.nepaliDate),
                             events: getEvents(for: dayInfo.nepaliDate),
+                            selectedEvent: selectedEvent,
                             onSelect: {
                                 selectedDate = dayInfo.nepaliDate
                                 if let gDate = dayInfo.gregorianDate {
@@ -221,7 +241,7 @@ struct NepaliCalendarView: View {
     
     // MARK: - Agenda View (Replaces Schedule)
     
-    private var agendaView: some View {
+    private func agendaView(selectedEvent: Binding<EKEvent?>) -> some View {
         ScrollViewReader { proxy in
             ScrollView(showsIndicators: false) {
                 LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
@@ -241,13 +261,14 @@ struct NepaliCalendarView: View {
                                let nepaliDate = NepaliDateConverter.convertToNepali(gregorianDate: day) {
                                 
                                 // Use the renamed AgendaDaySection
-                                AgendaDaySection(
-                                    nepaliDate: nepaliDate,
-                                    gregorianDate: day,
-                                    isToday: Calendar.current.isDateInToday(day),
-                                    events: dayEvents,
-                                    tithiName: NepaliDateConverter.getTithiName(for: day)
-                                )
+                                    AgendaDaySection(
+                                        nepaliDate: nepaliDate,
+                                        gregorianDate: day,
+                                        isToday: Calendar.current.isDateInToday(day),
+                                        events: dayEvents,
+                                        tithiName: NepaliDateConverter.getTithiName(for: day),
+                                        onEventSelect: selectEvent
+                                    )
                                 .id(day) // Use the Date as the ID
                             }
                         }
@@ -310,9 +331,11 @@ struct NepaliCalendarView: View {
             } else {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 4) {
-                        // 1. Cleaner loop (assuming Event is Identifiable)
-                        ForEach(dayEvents, id: \.eventIdentifier) { event in
-                                    CompactEventRow(event: event)
+                        // Use enumerated to ensure unique IDs
+                        ForEach(Array(dayEvents.enumerated()), id: \.offset) { index, event in
+                                    CompactEventRow(event: event) {
+                                        selectEvent(event)
+                                    }
                                 }
                        
                     }
@@ -454,5 +477,57 @@ struct NepaliCalendarView: View {
         let formatter = DateFormatter()
         formatter.dateStyle = .full
         return formatter.string(from: date)
+    }
+    
+    // MARK: - Event Selection Helper
+    
+    /// Safely selects an event by managing the dismissal/presentation flow
+    private func selectEvent(_ event: EKEvent) {
+        // If clicking the same event, toggle it (close)
+        if selectedEvent?.eventIdentifier == event.eventIdentifier {
+            selectedEvent = nil
+            pendingEvent = nil
+        } else if selectedEvent != nil {
+            // If another event is already open, we store the new one as pending
+            // and close the current one. The swap will happen in onDisappear.
+            pendingEvent = event
+            selectedEvent = nil
+        } else {
+            // Normal presentation
+            selectedEvent = event
+            pendingEvent = nil
+        }
+    }
+    
+    /// Formats event details for alert display
+    private func formatEventDetails(_ event: EKEvent) -> String {
+        var details: [String] = []
+        
+        // Time
+        let formatter = DateFormatter()
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        let start = formatter.string(from: event.startDate)
+        let end = formatter.string(from: event.endDate)
+        details.append("⏰ \(start) – \(end)")
+        
+        // Date
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        details.append("📅 \(formatter.string(from: event.startDate))")
+        
+        // Location
+        if let location = event.location, !location.isEmpty {
+            details.append("📍 \(location)")
+        }
+        
+        // Notes (first 100 chars)
+        if let notes = event.notes, !notes.isEmpty {
+            let cleanNotes = notes.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
+            let truncated = String(cleanNotes.prefix(100))
+            details.append("\n\(truncated)\(cleanNotes.count > 100 ? "..." : "")")
+        }
+        
+        return details.joined(separator: "\n")
     }
 }
