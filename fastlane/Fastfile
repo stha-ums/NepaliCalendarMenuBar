@@ -54,26 +54,20 @@ platform :mac do
       --window-pos 200 120 \
       --window-size 600 400 \
       --icon-size 100 \
-      --icon './output/NepaliDateMacMenuBar.app' 175 190 \
+      --icon 'NepaliDateMacMenuBar.app' 175 190 \
       --app-drop-link 425 190 \
       --no-internet-enable \
-      'NepaliDateMacMenuBar.dmg' \
-      './output/'"
+      '../output/NepaliDateMacMenuBar.dmg' \
+      '../output/'"
       
-    # Generate Sparkle Appcast
-    UI.message("Generating Sparkle Appcast using Apple Code Signing...")
-    
-    # Ensure the dmg is in the output folder for scanning
-    sh "mv ./NepaliDateMacMenuBar.dmg ./output/"
-    
     # Run generate_appcast (installed via brew install sparkle)
     # Without --ed-key-file, Sparkle 2 defaults to Apple Code Signing verification
     # We find the tool path using brew --prefix
     sparkle_bin = "#{`brew --prefix sparkle`.strip}/bin/generate_appcast"
     if File.exist?(sparkle_bin)
-      sh "#{sparkle_bin} ./output/"
+      sh "#{sparkle_bin} ../output/"
     else
-      sh "generate_appcast ./output/"
+      sh "generate_appcast ../output/"
     end
 
     # Re-enable automatic code signing for local development
