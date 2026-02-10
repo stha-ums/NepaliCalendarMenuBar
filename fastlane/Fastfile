@@ -49,6 +49,10 @@ platform :mac do
 
     # Create DMG
     sh "brew install create-dmg || true"
+    dmg_source = "../dmg_source"
+    sh "rm -rf #{dmg_source} && mkdir -p #{dmg_source}"
+    sh "cp -R ../output/NepaliDateMacMenuBar.app #{dmg_source}/"
+    
     sh "create-dmg \
       --volname 'Nepali Date Mac Menu Bar' \
       --window-pos 200 120 \
@@ -58,7 +62,7 @@ platform :mac do
       --app-drop-link 425 190 \
       --no-internet-enable \
       '../output/NepaliDateMacMenuBar.dmg' \
-      '../output/'"
+      '#{dmg_source}/'"
       
     # Find generate_appcast tool
     sparkle_bin = nil
