@@ -81,6 +81,14 @@ platform :mac do
     if sparkle_bin
       # Using absolute path for output to be safe in CI
       output_abs_path = File.expand_path('../output/')
+      
+      # Clean up duplicate zip files that cause sparkle to fail
+      zip_file = File.join(output_abs_path, "NepaliDateMacMenuBar.app.zip")
+      if File.exist?(zip_file)
+        UI.message("Removing duplicate zip file: #{zip_file}")
+        File.delete(zip_file)
+      end
+
       sh "#{sparkle_bin} \"#{output_abs_path}\""
     else
       UI.error("Could not find Sparkle's appcast generation tool. Skipping appcast generation.")
