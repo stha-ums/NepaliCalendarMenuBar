@@ -138,6 +138,7 @@ Temporary Items
 
 # App specific
 *.log
+Secrets.xcconfig
 
 # Proprietary Frameworks
 NepaliDaateMenuBar/Frameworks/

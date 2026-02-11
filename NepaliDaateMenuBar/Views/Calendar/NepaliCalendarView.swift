@@ -108,9 +108,13 @@ struct NepaliCalendarView: View {
                             .padding(.leading, 16)
                             .padding(.bottom, 20)
                             
-                            Spacer()
+                             Spacer()
                         }
                     }
+                    
+                    footerView
+                        .padding(.top, 4)
+                        .padding(.bottom, 8)
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)
@@ -144,7 +148,10 @@ struct NepaliCalendarView: View {
             loadEvents()
         }
         .onChange(of: currentDate) { _ in loadEvents() }
-        .onChange(of: viewMode) { _ in loadEvents() }
+        .onChange(of: viewMode) { newValue in 
+            loadEvents() 
+            TelemetryManager.shared.track("view.mode.changed", with: ["mode": newValue.rawValue])
+        }
     }
     
     // MARK: - Header
@@ -164,6 +171,8 @@ struct NepaliCalendarView: View {
                 TodayButton {
                     currentDate = Date()
                     selectedDate = currentNepaliDate
+                    
+                    TelemetryManager.shared.track("button.today.clicked", with: ["mode": viewMode.rawValue])
                     
                     if viewMode == .agenda {
                         withAnimation {
@@ -492,10 +501,16 @@ struct NepaliCalendarView: View {
             // and close the current one. The swap will happen in onDisappear.
             pendingEvent = event
             selectedEvent = nil
+            
+            // Track opening the new event
+            TelemetryManager.shared.track("calendar.event.opened")
         } else {
             // Normal presentation
             selectedEvent = event
             pendingEvent = nil
+            
+            // Track opening the event
+            TelemetryManager.shared.track("calendar.event.opened")
         }
     }
     
@@ -529,5 +544,54 @@ struct NepaliCalendarView: View {
         }
         
         return details.joined(separator: "\n")
+    }
+    
+    // MARK: - Footer
+    
+    private var footerView: some View {
+        HStack(spacing: 16) {
+            FooterButton(title: "Settings", icon: "gearshape") {
+                (NSApp.delegate as? AppDelegate)?.openSettings()
+            }
+            
+            FooterButton(title: "About", icon: "info.circle") {
+                (NSApp.delegate as? AppDelegate)?.openAbout()
+            }
+            
+            Spacer()
+            
+            Text("v\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")")
+                .font(.system(size: 9))
+                .foregroundColor(.secondary.opacity(0.5))
+        }
+        .padding(.horizontal, 8)
+    }
+}
+
+struct FooterButton: View {
+    let title: String
+    let icon: String
+    let action: () -> Void
+    @State private var isHovering = false
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.system(size: 10))
+                Text(title)
+                    .font(.system(size: 11, weight: .medium))
+            }
+            .foregroundColor(isHovering ? .accentColor : .secondary)
+            .padding(.vertical, 4)
+            .padding(.horizontal, 8)
+            .background(Color.accentColor.opacity(isHovering ? 0.15 : 0.05))
+            .cornerRadius(6)
+        }
+        .buttonStyle(.plain)
+        .focusable(false)
+        .onHover { hovering in
+            isHovering = hovering
+        }
     }
 }

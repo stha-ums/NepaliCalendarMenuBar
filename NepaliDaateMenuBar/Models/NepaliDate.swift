@@ -11,6 +11,7 @@ struct NepaliDate: Equatable {
     let year: Int
     let month: Int
     let day: Int
+    var tithi: String? = nil
     
     var monthName: String {
         let language = LanguageSettings.shared.language

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3357D9A62F3CA1F8003407C9 /* TelemetryClient in Frameworks */ = {isa = PBXBuildFile; productRef = 3357D9A52F3CA1F8003407C9 /* TelemetryClient */; };
+		3357D9A82F3CA1F8003407C9 /* TelemetryDeck in Frameworks */ = {isa = PBXBuildFile; productRef = 3357D9A72F3CA1F8003407C9 /* TelemetryDeck */; };
 		33BC0DED2F1778E1009C25B3 /* BsCalendarCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33BC0DEC2F1778E1009C25B3 /* BsCalendarCore.xcframework */; };
 		33D079AF2F1778E1009C25B3 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 33D079AE2F1778E1009C25B3 /* Sparkle */; };
 /* End PBXBuildFile section */
@@ -14,6 +16,7 @@
 /* Begin PBXFileReference section */
 		338DD69F2ECA475400360807 /* NepaliDateMacMenuBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NepaliDateMacMenuBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33BC0DEC2F1778E1009C25B3 /* BsCalendarCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = BsCalendarCore.xcframework; path = NepaliDaateMenuBar/Frameworks/BsCalendarCore.xcframework; sourceTree = "<group>"; };
+		33D079B22F1778E1009C25B5 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -30,7 +33,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				33BC0DED2F1778E1009C25B3 /* BsCalendarCore.xcframework in Frameworks */,
+				3357D9A62F3CA1F8003407C9 /* TelemetryClient in Frameworks */,
 				33D079AF2F1778E1009C25B3 /* Sparkle in Frameworks */,
+				3357D9A82F3CA1F8003407C9 /* TelemetryDeck in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -40,6 +45,7 @@
 		338DD6962ECA475400360807 = {
 			isa = PBXGroup;
 			children = (
+				33D079B22F1778E1009C25B5 /* Config.xcconfig */,
 				338DD6A12ECA475400360807 /* NepaliDaateMenuBar */,
 				33BC0DEB2F1778E1009C25B3 /* Frameworks */,
 				338DD6A02ECA475400360807 /* Products */,
@@ -73,6 +79,7 @@
 				338DD69C2ECA475400360807 /* Frameworks */,
 				338DD69D2ECA475400360807 /* Resources */,
 				33D079B12F1778E1009C25B5 /* Remove Sparkle if No SPARKLE Flag */,
+				33D079B32F1778E1009C25B5 /* Validate Telemetry Config */,
 			);
 			buildRules = (
 			);
@@ -113,6 +120,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				33D079AD2F1778E1009C25B3 /* XCRemoteSwiftPackageReference "Sparkle" */,
+				3357D9A42F3CA1F8003407C9 /* XCRemoteSwiftPackageReference "SwiftSDK" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 338DD6A02ECA475400360807 /* Products */;
@@ -154,6 +162,25 @@
 			shellPath = /bin/sh;
 			shellScript = "if [[ ! \"$OTHER_SWIFT_FLAGS\" == *\"-D SPARKLE\"* ]]; then\n  FRAMEWORK_PATH=\"$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH/Sparkle.framework\"\n  if [ -d \"$FRAMEWORK_PATH\" ]; then\n    echo \"Found Sparkle framework at $FRAMEWORK_PATH. Removing for App Store build...\"\n    rm -rf \"$FRAMEWORK_PATH\"\n  else\n    echo \"Sparkle framework not found at $FRAMEWORK_PATH. Skipping removal.\"\n  fi\nfi\n";
 		};
+		33D079B32F1778E1009C25B5 /* Validate Telemetry Config */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Validate Telemetry Config";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -z \"$TELEMETRY_APP_ID\" ] || [ \"$TELEMETRY_APP_ID\" == \"your_app_id_here\" ]; then\n  echo \"warning: TELEMETRY_APP_ID is not set or using placeholder. Telemetry will be disabled. Update Secrets.xcconfig.\"\nfi\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -169,6 +196,7 @@
 /* Begin XCBuildConfiguration section */
 		338DD6A82ECA475500360807 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 33D079B22F1778E1009C25B5 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -233,6 +261,7 @@
 		};
 		338DD6A92ECA475500360807 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 33D079B22F1778E1009C25B5 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -289,6 +318,7 @@
 		};
 		338DD6AB2ECA475500360807 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 33D079B22F1778E1009C25B5 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -307,6 +337,7 @@
 					"$(SRCROOT)/NepaliDaateMenuBar/Frameworks",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NepaliDaateMenuBar/Info.plist;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/NepaliDaateMenuBar/Frameworks/BsCalendarCore.xcframework/macos-arm64_x86_64/Headers",
@@ -314,6 +345,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "This app needs access to your calendar to display events in the Nepali calendar view.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_TelemetryAppID = "$(TELEMETRY_APP_ID)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -342,6 +374,7 @@
 		};
 		338DD6AC2ECA475500360807 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 33D079B22F1778E1009C25B5 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -360,6 +393,7 @@
 					"$(SRCROOT)/NepaliDaateMenuBar/Frameworks",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NepaliDaateMenuBar/Info.plist;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/NepaliDaateMenuBar/Frameworks/BsCalendarCore.xcframework/macos-arm64_x86_64/Headers",
@@ -367,6 +401,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "This app needs access to your calendar to display events in the Nepali calendar view.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_TelemetryAppID = "$(TELEMETRY_APP_ID)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -417,6 +452,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		3357D9A42F3CA1F8003407C9 /* XCRemoteSwiftPackageReference "SwiftSDK" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TelemetryDeck/SwiftSDK";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.11.0;
+			};
+		};
 		33D079AD2F1778E1009C25B3 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sparkle-project/Sparkle";
@@ -428,6 +471,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		3357D9A52F3CA1F8003407C9 /* TelemetryClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3357D9A42F3CA1F8003407C9 /* XCRemoteSwiftPackageReference "SwiftSDK" */;
+			productName = TelemetryClient;
+		};
+		3357D9A72F3CA1F8003407C9 /* TelemetryDeck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3357D9A42F3CA1F8003407C9 /* XCRemoteSwiftPackageReference "SwiftSDK" */;
+			productName = TelemetryDeck;
+		};
 		33D079AE2F1778E1009C25B3 /* Sparkle */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 33D079AD2F1778E1009C25B3 /* XCRemoteSwiftPackageReference "Sparkle" */;

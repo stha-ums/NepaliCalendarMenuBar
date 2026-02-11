@@ -20,5 +20,7 @@
 	<false/>
 	<key>SUFeedURL</key>
 	<string>https://github.com/stha-ums/NepaliCalendarMenuBar/releases/latest/download/appcast.xml</string>
+	<key>TelemetryAppID</key>
+	<string>$(TELEMETRY_APP_ID)</string>
 </dict>
 </plist>

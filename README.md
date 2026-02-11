@@ -1,4 +1,4 @@
-# Nepali Date Mac Menu Bar
+# BS Calendar (Bikram Sambat)
 
 <div align="center">
 
@@ -42,7 +42,7 @@
 - **Customizable Formats** - Short, long, and full date display options
 - **Calendar Integration** - View macOS Calendar events in Nepali dates
 - **System Integration** - Menu bar app with launch on login
-- **Privacy-Focused** - All conversions local, no internet required
+- **Privacy-Focused** - Privacy-first date conversions and usage metrics
 
 ---
 
@@ -50,7 +50,7 @@
 
 ### Mac App Store (Recommended)
 
-<a href="https://apps.apple.com/app/id6738343894">
+<a href="https://apps.apple.com/np/app/bs-calendar-bikram-sambat/id6755640550?mt=12">
 <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the Mac App Store" height="60">
 </a>
 
@@ -60,7 +60,7 @@
 
 **Direct Download:**
 
-[Latest Release](https://github.com/yourusername/NepaliDaateMenuBar/releases/latest) - Download the `.dmg` file
+[Latest Release](https://github.com/stha-ums/NepaliCalendarMenuBar/releases/latest) - Download the `.dmg` file
 
 **System Requirements:**
 
@@ -87,7 +87,7 @@ The app is now **completely FREE** on both the Mac App Store and GitHub!
 If you find this app useful, please:
 - ⭐ Star this repository on GitHub
 - 📝 Leave a review on the Mac App Store
-- 🐛 Report bugs or suggest features via [Issues](https://github.com/yourusername/NepaliDaateMenuBar/issues)
+- 🐛 Report bugs or suggest features via [Issues](https://github.com/stha-ums/NepaliCalendarMenuBar/issues)
 - 💻 Contribute code or improvements via pull requests
 
 ---
@@ -96,7 +96,7 @@ If you find this app useful, please:
 
 ### Installation
 
-1. **Download** the latest `.dmg` file from [Releases](https://github.com/yourusername/NepaliDaateMenuBar/releases/latest)
+1. **Download** the latest `.dmg` file from [Releases](https://github.com/stha-ums/NepaliCalendarMenuBar/releases/latest)
 
 2. **Open** the downloaded DMG file
 
@@ -176,8 +176,8 @@ This project uses a proprietary core engine. To build it yourself:
 
 1. **Clone** the repository:
    ```bash
-   git clone https://github.com/CalNep/NepaliDaateMenuBar.git
-   cd NepaliDaateMenuBar
+   git clone https://github.com/stha-ums/NepaliCalendarMenuBar.git
+   cd NepaliCalendarMenuBar
    ```
 
 2. **Fetch Dependencies**:
@@ -195,6 +195,20 @@ This project uses a proprietary core engine. To build it yourself:
 
 ---
 
+## Privacy & Telemetry
+
+We value your privacy. This app uses **[TelemetryDeck](https://telemetrydeck.com/)** to collect anonymous usage data. 
+
+**What we collect:**
+- App version and update preferences.
+- Feature usage (e.g., how often the calendar is opened, which language is used).
+- Interactions with the calendar (e.g., viewing event details, joining meetings).
+
+**Why we collect it:**
+These metrics help us understand how people use the app so we can prioritize features and fixes that matter most. We do **not** collect any personal information, and your event data remains private on your machine.
+
+---
+
 ## License
 
 Licensed under **GNU General Public License v3.0** - see [LICENSE](LICENSE) file for details.
@@ -203,8 +217,8 @@ Licensed under **GNU General Public License v3.0** - see [LICENSE](LICENSE) file
 
 ## Support
 
-- **Bug Reports**: [Open an issue](https://github.com/yourusername/NepaliDaateMenuBar/issues)
-- **Feature Requests**: [Request features](https://github.com/yourusername/NepaliDaateMenuBar/issues)
+- **Bug Reports**: [Open an issue](https://github.com/stha-ums/NepaliCalendarMenuBar/issues)
+- **Feature Requests**: [Request features](https://github.com/stha-ums/NepaliCalendarMenuBar/issues)
 
 ---
 
@@ -218,6 +232,6 @@ Licensed under **GNU General Public License v3.0** - see [LICENSE](LICENSE) file
 
 **Made with love for the Nepali community worldwide**
 
-[Back to Top](#nepali-date-mac-menu-bar)
+[Back to Top](#bs-calendar-bikram-sambat)
 
 </div>

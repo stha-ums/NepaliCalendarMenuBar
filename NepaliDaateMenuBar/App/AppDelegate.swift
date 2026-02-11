@@ -10,12 +10,19 @@ import SwiftUI
 import Combine
 
 class AppDelegate: NSObject, NSApplicationDelegate {
+    static private(set) var shared: AppDelegate!
+    
     var statusBarItem: NSStatusItem?
     var popover: NSPopover?
     var onboardingWindow: NSWindow?
     var settingsWindow: NSWindow?
     var aboutWindow: NSWindow?
     private var cancellables = Set<AnyCancellable>()
+    
+    override init() {
+        super.init()
+        AppDelegate.shared = self
+    }
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         #if DEBUG
@@ -43,6 +50,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             // Hide dock icon
             NSApp.setActivationPolicy(.accessory)
+            
+            // Initialize Telemetry
+            TelemetryManager.shared.setup()
             
             // Setup menu bar
             self.setupMenuBar()
@@ -80,6 +90,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     // Activate app to ensure popover can detect clicks outside
                     NSApp.activate(ignoringOtherApps: true)
                     popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
+                    TelemetryManager.shared.track("popover.opened")
                 }
             }
         }
@@ -101,8 +112,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @objc func openAbout() {
-        popover?.performClose(nil)
-        
         // Ensure we're on the main thread
         guard Thread.isMainThread else {
             DispatchQueue.main.async { [weak self] in
@@ -123,6 +132,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 existingWindow.level = .normal
             }
+            popover?.performClose(nil)
             return
         }
         
@@ -154,16 +164,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.orderFrontRegardless()
         window.makeKeyAndOrderFront(nil)
         
+        TelemetryManager.shared.track("window.about.opened")
+        
         // Reset to normal level after window is shown
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             window.level = .normal
         }
+        
+        // Close popover
+        popover?.performClose(nil)
     }
     
     @objc func openSettings() {
-        // Close popover if open
-        popover?.performClose(nil)
-        
         // Ensure we're on the main thread
         guard Thread.isMainThread else {
             DispatchQueue.main.async { [weak self] in
@@ -184,6 +196,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 existingWindow.level = .normal
             }
+            popover?.performClose(nil)
             return
         }
         
@@ -220,10 +233,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.orderFrontRegardless()
         window.makeKeyAndOrderFront(nil)
         
+        TelemetryManager.shared.track("window.settings.opened")
+        
         // Reset to normal level after window is shown
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             window.level = .normal
         }
+        
+        // Close popover
+        popover?.performClose(nil)
     }
     
     @objc func quitApp() {
@@ -346,6 +364,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             .store(in: &cancellables)
         
+        DateFormatSettings.shared.$showTithi
+            .sink { [weak self] _ in
+                self?.updateDateDisplay()
+            }
+            .store(in: &cancellables)
+        
         LanguageSettings.shared.$language
             .sink { [weak self] _ in
                 self?.updateDateDisplay()
@@ -410,6 +434,7 @@ extension AppDelegate: NSPopoverDelegate {
     
     func popoverDidClose(_ notification: Notification) {
         // Popover closed
+        TelemetryManager.shared.track("popover.closed")
     }
 }
 

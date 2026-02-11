@@ -15,6 +15,7 @@ class LanguageSettings: ObservableObject {
         didSet {
             UserDefaults.standard.set(language.rawValue, forKey: Constants.UserDefaultsKeys.appLanguage)
             updateFormatPattern()
+            TelemetryManager.shared.track("settings.language.changed", with: ["language": language.rawValue])
         }
     }
     

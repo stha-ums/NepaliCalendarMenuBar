@@ -22,6 +22,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PAT }}
         run: ./scripts/setup-dependencies.sh
 
+      - name: Setup Secrets.xcconfig
+        run: echo "TELEMETRY_APP_ID = ${{ secrets.TELEMETRY_APP_ID }}" > Secrets.xcconfig
+
       - name: Setup Fastlane
         uses: ruby/setup-ruby@v1
         with:
@@ -62,6 +65,7 @@ jobs:
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
           APP_STORE_CONNECT_API_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_API_PRIVATE_KEY }}
+          TELEMETRY_APP_ID: ${{ secrets.TELEMETRY_APP_ID }}
         run: |
           # Generate MATCH_GIT_BASIC_AUTHORIZATION from PAT
           export MATCH_GIT_BASIC_AUTHORIZATION=$(echo -n "stha-ums:${{ secrets.PAT }}" | base64)

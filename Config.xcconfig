@@ -1,0 +1,5 @@
+// Config.xcconfig
+// Base configuration for the project.
+
+// Try to include secrets if they exist
+#include? "Secrets.xcconfig"

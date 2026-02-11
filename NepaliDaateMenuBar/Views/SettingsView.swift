@@ -53,14 +53,34 @@ struct SettingsView: View {
                 // Display Format
                 OnboardingStyleSection(title: "DISPLAY FORMAT") {
                     VStack(spacing: 10) {
-                        ForEach(DateFormatType.allCases.filter { $0 != .custom && $0 != .dayOnly && $0 != .monthDay }, id: \.self) { type in
+                        ForEach(DateFormatType.allCases.filter { $0 != .custom }, id: \.self) { type in
                             FormatOptionRow(
                                 type: type,
                                 language: languageSettings.language,
+                                showTithi: formatSettings.showTithi,
                                 isSelected: formatSettings.formatType == type,
                                 onSelect: { formatSettings.formatType = type }
                             )
+                            .animation(.spring(response: 0.35, dampingFraction: 0.8), value: formatSettings.showTithi)
                         }
+                        
+                        Divider()
+                            .padding(.vertical, 4)
+                        
+                        Toggle(isOn: $formatSettings.showTithi) {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Show Tithi")
+                                        .font(.system(size: 12, weight: .medium))
+                                    Text("Append lunar day to the date")
+                                        .font(.system(size: 9))
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                            }
+                        }
+                        .toggleStyle(.switch)
+                        .padding(.horizontal, 4)
                         
                         // Preview
                         if let date = previewDate {
@@ -74,6 +94,7 @@ struct SettingsView: View {
                                 Spacer()
                                 Text(formatSettings.format(date))
                                     .font(.system(size: 13, weight: .medium))
+                                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: formatSettings.showTithi)
                             }
                             .padding(8)
                             .background(Color.accentColor.opacity(0.08))
@@ -96,6 +117,7 @@ struct SettingsView: View {
                             
                             Button(action: {
                                 launchOnLoginManager.openLoginItemsSettings()
+                                TelemetryManager.shared.track("settings.launch_at_login.manual_settings_opened")
                             }) {
                                 HStack(spacing: 4) {
                                     Image(systemName: "gearshape")
@@ -214,6 +236,7 @@ struct SettingsView: View {
             
             // Reset managers
             OnboardingManager.shared.resetOnboarding()
+            TelemetryManager.shared.track("settings.reset_clicked")
             
             // Show confirmation
             let confirmAlert = NSAlert()
@@ -307,6 +330,7 @@ struct OnboardingStyleSection<Content: View>: View {
 struct FormatOptionRow: View {
     let type: DateFormatType
     let language: AppLanguage
+    let showTithi: Bool
     let isSelected: Bool
     let onSelect: () -> Void
     
@@ -318,7 +342,7 @@ struct FormatOptionRow: View {
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(.primary)
                     
-                    Text(type.example(for: language))
+                    Text(type.example(for: language, showTithi: showTithi))
                         .font(.system(size: 10))
                         .foregroundColor(.secondary)
                 }

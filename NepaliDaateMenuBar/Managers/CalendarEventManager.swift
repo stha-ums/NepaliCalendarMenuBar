@@ -39,6 +39,7 @@ class CalendarEventManager: ObservableObject {
                 let granted = try await eventStore.requestFullAccessToEvents()
                 await MainActor.run {
                     checkAuthorizationStatus()
+                    TelemetryManager.shared.track("permission.calendar.requested", with: ["granted": "\(granted)"])
                 }
                 return granted
             } catch {
@@ -53,6 +54,7 @@ class CalendarEventManager: ObservableObject {
                 let status = try await eventStore.requestAccess(to: .event)
                 await MainActor.run {
                     checkAuthorizationStatus()
+                    TelemetryManager.shared.track("permission.calendar.requested", with: ["granted": "\(status)"])
                 }
                 return status
             } catch {

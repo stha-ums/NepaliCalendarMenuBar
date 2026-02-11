@@ -45,6 +45,7 @@ struct EventDetailPopup: View {
             // Meeting Link Button
             if let meetingURL = meetingURL {
                 Button(action: {
+                    TelemetryManager.shared.track("calendar.event.join_meeting_clicked")
                     NSWorkspace.shared.open(meetingURL)
                     // Close the popup
                     dismiss()

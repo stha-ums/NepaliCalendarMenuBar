@@ -14,6 +14,7 @@ class UpdateManager: NSObject, ObservableObject {
     @Published var isAppStoreCheckEnabled: Bool {
         didSet {
             UserDefaults.standard.set(isAppStoreCheckEnabled, forKey: "AppStoreUpdateCheckEnabled")
+            TelemetryManager.shared.track("settings.auto_update.changed", with: ["enabled": "\(isAppStoreCheckEnabled)", "type": "appstore"])
         }
     }
     
@@ -116,6 +117,7 @@ class UpdateManager: NSObject, ObservableObject {
         }
         set {
             updaterController?.updater.automaticallyChecksForUpdates = newValue
+            TelemetryManager.shared.track("settings.auto_update.changed", with: ["enabled": "\(newValue)", "type": "sparkle"])
         }
     }
 #endif

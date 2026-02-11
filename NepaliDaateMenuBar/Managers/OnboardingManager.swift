@@ -17,7 +17,14 @@ class OnboardingManager: ObservableObject {
         }
     }
     
-    @Published var currentStep: Int = 0
+    @Published var currentStep: Int = 0 {
+        didSet {
+            TelemetryManager.shared.track("onboarding.step_changed", with: [
+                "step": "\(currentStep + 1)",
+                "total": "\(totalSteps)"
+            ])
+        }
+    }
     let totalSteps = 6
     
     private init() {
@@ -26,11 +33,13 @@ class OnboardingManager: ObservableObject {
     
     func completeOnboarding() {
         hasCompletedOnboarding = true
+        TelemetryManager.shared.track("onboarding.completed")
     }
     
     func resetOnboarding() {
         hasCompletedOnboarding = false
         currentStep = 0
+        TelemetryManager.shared.track("onboarding.reset")
     }
     
     func nextStep() {

@@ -19,6 +19,7 @@ class LaunchOnLoginManager: ObservableObject {
             UserDefaults.standard.set(isEnabled, forKey: Constants.UserDefaultsKeys.launchOnLogin)
             // Attempt to register/unregister with system
             updateLoginItemStatus(enabled: isEnabled)
+            TelemetryManager.shared.track("settings.launch_at_login.changed", with: ["enabled": "\(isEnabled)"])
         }
     }
     
@@ -51,12 +52,20 @@ class LaunchOnLoginManager: ObservableObject {
     
     private static func checkSystemLoginItemStatus() -> Bool {
         if #available(macOS 13.0, *) {
+            // Check if we have a saved preference
+            if UserDefaults.standard.object(forKey: Constants.UserDefaultsKeys.launchOnLogin) == nil {
+                // First run: Default to true
+                return true
+            }
             // Use SMAppService for macOS 13+
             return SMAppService.mainApp.status == .enabled
         } else {
-            // For older macOS versions, check if app is in login items
-            // This is a fallback - the checkbox serves as user preference
-            return UserDefaults.standard.bool(forKey: Constants.UserDefaultsKeys.launchOnLogin)
+            // For older macOS versions
+            if let savedValue = UserDefaults.standard.object(forKey: Constants.UserDefaultsKeys.launchOnLogin) as? Bool {
+                return savedValue
+            }
+            // First run: Default to true
+            return true
         }
     }
     

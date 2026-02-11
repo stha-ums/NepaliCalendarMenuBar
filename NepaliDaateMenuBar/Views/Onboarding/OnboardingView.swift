@@ -31,47 +31,35 @@ struct OnboardingView: View {
             .padding(.bottom, 4)
             
             // Content with manual step switching
-            ZStack {
-                if onboardingManager.currentStep == 0 {
-                    WelcomeStep()
-                        .transition(.asymmetric(
-                            insertion: .opacity,
-                            removal: .opacity
-                        ))
-                } else if onboardingManager.currentStep == 1 {
-                    LanguageStep(languageSettings: languageSettings)
-                        .transition(.asymmetric(
-                            insertion: .opacity,
-                            removal: .opacity
-                        ))
-                } else if onboardingManager.currentStep == 2 {
-                    DateFormatStep(formatSettings: formatSettings, languageSettings: languageSettings)
-                        .transition(.asymmetric(
-                            insertion: .opacity,
-                            removal: .opacity
-                        ))
-                } else if onboardingManager.currentStep == 3 {
-                    CalendarStep(eventManager: eventManager)
-                        .transition(.asymmetric(
-                            insertion: .opacity,
-                            removal: .opacity
-                        ))
-                } else if onboardingManager.currentStep == 4 {
-                    LaunchOnLoginStep(launchOnLoginManager: launchOnLoginManager)
-                        .transition(.asymmetric(
-                            insertion: .opacity,
-                            removal: .opacity
-                        ))
-                } else if onboardingManager.currentStep == 5 {
-                    FinalStep(onComplete: {
-                        onboardingManager.completeOnboarding()
-                        dismiss()
-                    })
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+                    Spacer(minLength: 0)
+                    ZStack {
+                        if onboardingManager.currentStep == 0 {
+                            WelcomeStep()
+                        } else if onboardingManager.currentStep == 1 {
+                            LanguageStep(languageSettings: languageSettings)
+                        } else if onboardingManager.currentStep == 2 {
+                            DateFormatStep(formatSettings: formatSettings, languageSettings: languageSettings)
+                        } else if onboardingManager.currentStep == 3 {
+                            CalendarStep(eventManager: eventManager)
+                        } else if onboardingManager.currentStep == 4 {
+                            LaunchOnLoginStep(launchOnLoginManager: launchOnLoginManager)
+                        } else if onboardingManager.currentStep == 5 {
+                            FinalStep(onComplete: {
+                                onboardingManager.completeOnboarding()
+                                dismiss()
+                            })
+                        }
+                    }
                     .transition(.asymmetric(
                         insertion: .opacity,
                         removal: .opacity
                     ))
+                    .frame(maxWidth: .infinity)
+                    Spacer(minLength: 0)
                 }
+                .frame(minHeight: Constants.Window.onboardingHeight - 140)
             }
             .animation(.easeInOut(duration: 0.3), value: onboardingManager.currentStep)
             
@@ -103,10 +91,8 @@ struct OnboardingView: View {
                 }
             }
             .padding(20)
-            
-            Spacer(minLength: 0)
         }
-        .frame(width: Constants.Window.onboardingWidth, height: Constants.Window.onboardingHeight, alignment: .top)
+        .frame(width: Constants.Window.onboardingWidth, height: Constants.Window.onboardingHeight)
         .background(Color(NSColor.windowBackgroundColor))
     }
 }
@@ -266,7 +252,7 @@ struct DateFormatStep: View {
             }
             
             VStack(spacing: 8) {
-                ForEach(DateFormatType.allCases.filter { $0 != .custom && $0 != .dayOnly && $0 != .monthDay}, id: \.self) { type in
+                ForEach(DateFormatType.allCases.filter { $0 != .custom }, id: \.self) { type in
                     Button(action: {
                         formatSettings.formatType = type
                     }) {
@@ -276,9 +262,10 @@ struct DateFormatStep: View {
                                     .font(.system(size: 12, weight: .medium))
                                     .foregroundColor(.primary)
                                 
-                                Text(type.example(for: languageSettings.language))
+                                Text(type.example(for: languageSettings.language, showTithi: formatSettings.showTithi))
                                     .font(.system(size: 10))
                                     .foregroundColor(.secondary)
+                                    .animation(.spring(response: 0.35, dampingFraction: 0.8), value: formatSettings.showTithi)
                             }
                             
                             Spacer()
@@ -305,6 +292,25 @@ struct DateFormatStep: View {
                     }
                     .buttonStyle(.plain)
                 }
+                
+                Divider()
+                    .padding(.vertical, 4)
+                    .padding(.horizontal, 32)
+                
+                Toggle(isOn: $formatSettings.showTithi) {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Show Tithi")
+                                .font(.system(size: 12, weight: .medium))
+                            Text("Append lunar day to the date")
+                                .font(.system(size: 9))
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
+                    }
+                }
+                .toggleStyle(.switch)
+                .padding(.horizontal, 36)
             }
             .padding(.horizontal, 32)
             
@@ -380,7 +386,7 @@ struct CalendarStep: View {
 
 struct LaunchOnLoginStep: View {
     @ObservedObject var launchOnLoginManager: LaunchOnLoginManager
-    @State private var wantsLaunchOnLogin = false
+    @State private var wantsLaunchOnLogin = true
     
     var body: some View {
         VStack(spacing: 18) {
@@ -460,6 +466,10 @@ struct LaunchOnLoginStep: View {
                 .buttonStyle(.plain)
             }
             .padding(.horizontal, 32)
+            .onAppear {
+                // Ensure manager reflects default selection when visiting this step
+                launchOnLoginManager.isEnabled = wantsLaunchOnLogin
+            }
             
             Text("You can change this later in settings")
                 .font(.system(size: 9))

@@ -18,7 +18,9 @@ class NepaliDateConverter {
             return nil
         }
         
-        return convertToNepali(year: year, month: month, day: day)
+        var nepaliDate = convertToNepali(year: year, month: month, day: day)
+        nepaliDate?.tithi = getTithiName(for: gregorianDate)
+        return nepaliDate
     }
     
     /// Convert Gregorian date components to Nepali date
@@ -27,7 +29,12 @@ class NepaliDateConverter {
         
         do {
             let bsDate = try engine.gregorianToBs(date: gDate)
-            return NepaliDate(year: Int(bsDate.year), month: Int(bsDate.month), day: Int(bsDate.day))
+            var nepaliDate = NepaliDate(year: Int(bsDate.year), month: Int(bsDate.month), day: Int(bsDate.day))
+            var calendar = Calendar(identifier: .gregorian)
+            if let date = calendar.date(from: DateComponents(year: year, month: month, day: day)) {
+                nepaliDate.tithi = getTithiName(for: date)
+            }
+            return nepaliDate
         } catch {
             print("Error converting AD to BS: \(error)")
             return nil
@@ -87,7 +94,8 @@ class NepaliDateConverter {
             
             // Add month days
             for day in monthData.days {
-                let nepaliDate = NepaliDate(year: Int(day.bsYear), month: Int(day.bsMonth), day: Int(day.bsDay))
+                var nepaliDate = NepaliDate(year: Int(day.bsYear), month: Int(day.bsMonth), day: Int(day.bsDay))
+                nepaliDate.tithi = try? engine.getTithiName(tithi: day.tithi, lang: engineLang)
                 
                 // GregorianDate to Date
                 var calendar = Calendar(identifier: .gregorian)
