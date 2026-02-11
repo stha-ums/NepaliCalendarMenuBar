@@ -22,9 +22,10 @@ platform :mac do
       keychain_password: ENV["CI"] ? "actions" : ""
     )
 
-    # Disable automatic code signing
-    disable_automatic_code_signing(
-      path: "NepaliDateMacMenuBar.xcodeproj"
+    # Update code signing settings
+    update_code_signing_settings(
+      path: "NepaliDateMacMenuBar.xcodeproj",
+      use_automatic_signing: false
     )
     
     # Build and Archive with version injection
@@ -35,7 +36,7 @@ platform :mac do
       output_directory: "./output",
       output_name: "NepaliDateMacMenuBar",
       codesigning_identity: "Developer ID Application",
-      xcargs: "ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO MARKETING_VERSION=#{version} CURRENT_PROJECT_VERSION=#{build_number} OTHER_CODE_SIGN_FLAGS='--timestamp' OTHER_SWIFT_FLAGS='-D SPARKLE'",
+      xcargs: "ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO MARKETING_VERSION=#{version} CURRENT_PROJECT_VERSION=#{build_number} OTHER_CODE_SIGN_FLAGS='--timestamp' OTHER_SWIFT_FLAGS='-D SPARKLE' DEVELOPMENT_TEAM=4DRNCBN798 CODE_SIGN_STYLE=Manual",
       verbose: true
     )
 
@@ -98,9 +99,10 @@ platform :mac do
       UI.error("Could not find Sparkle's appcast generation tool. Skipping appcast generation.")
     end
 
-    # Re-enable automatic code signing for local development
-    enable_automatic_code_signing(
-      path: "NepaliDateMacMenuBar.xcodeproj"
+    # Reset to automatic code signing for local development
+    update_code_signing_settings(
+      path: "NepaliDateMacMenuBar.xcodeproj",
+      use_automatic_signing: true
     )
   end
 

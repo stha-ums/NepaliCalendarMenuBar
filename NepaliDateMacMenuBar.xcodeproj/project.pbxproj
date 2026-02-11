@@ -22,6 +22,8 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		338DD6A12ECA475400360807 /* NepaliDaateMenuBar */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = NepaliDaateMenuBar;
 			sourceTree = "<group>";
 		};
@@ -337,11 +339,11 @@
 					"$(SRCROOT)/NepaliDaateMenuBar/Frameworks",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = NepaliDaateMenuBar/Info.plist;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/NepaliDaateMenuBar/Frameworks/BsCalendarCore.xcframework/macos-arm64_x86_64/Headers",
 				);
+				INFOPLIST_FILE = NepaliDaateMenuBar/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "This app needs access to your calendar to display events in the Nepali calendar view.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -393,11 +395,11 @@
 					"$(SRCROOT)/NepaliDaateMenuBar/Frameworks",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = NepaliDaateMenuBar/Info.plist;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/NepaliDaateMenuBar/Frameworks/BsCalendarCore.xcframework/macos-arm64_x86_64/Headers",
 				);
+				INFOPLIST_FILE = NepaliDaateMenuBar/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "This app needs access to your calendar to display events in the Nepali calendar view.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
