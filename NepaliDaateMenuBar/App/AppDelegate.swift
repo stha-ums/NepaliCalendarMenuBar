@@ -353,24 +353,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // Listen for format changes
         DateFormatSettings.shared.$formatType
+            .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.updateDateDisplay()
             }
             .store(in: &cancellables)
         
         DateFormatSettings.shared.$customPattern
+            .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.updateDateDisplay()
             }
             .store(in: &cancellables)
         
         DateFormatSettings.shared.$showTithi
+            .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.updateDateDisplay()
             }
             .store(in: &cancellables)
         
         LanguageSettings.shared.$language
+            .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.updateDateDisplay()
             }

@@ -106,15 +106,14 @@ struct NepaliCalendarView: View {
                                     .foregroundColor(.secondary)
                             }
                             .padding(.leading, 16)
-                            .padding(.bottom, 20)
+                            .padding(.bottom, 10)
                             
                              Spacer()
                         }
                     }
-                    
-                    footerView
-                        .padding(.top, 4)
-                        .padding(.bottom, 8)
+            footerView
+            .padding(.horizontal, 12)
+            .padding(.bottom, 12)
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)
@@ -122,6 +121,8 @@ struct NepaliCalendarView: View {
                 // Use the new Agenda View
                 agendaView(selectedEvent: $selectedEvent)
             }
+            
+           
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .popover(item: $selectedEvent, arrowEdge: .trailing) { event in
@@ -151,6 +152,9 @@ struct NepaliCalendarView: View {
         .onChange(of: viewMode) { newValue in 
             loadEvents() 
             TelemetryManager.shared.track("view.mode.changed", with: ["mode": newValue.rawValue])
+        }
+        .onChange(of: eventManager.authorizationStatus) { _ in
+            loadEvents()
         }
     }
     
@@ -551,11 +555,11 @@ struct NepaliCalendarView: View {
     private var footerView: some View {
         HStack(spacing: 16) {
             FooterButton(title: "Settings", icon: "gearshape") {
-                (NSApp.delegate as? AppDelegate)?.openSettings()
+                AppDelegate.shared.openSettings()
             }
             
             FooterButton(title: "About", icon: "info.circle") {
-                (NSApp.delegate as? AppDelegate)?.openAbout()
+                AppDelegate.shared.openAbout()
             }
             
             Spacer()
@@ -564,7 +568,6 @@ struct NepaliCalendarView: View {
                 .font(.system(size: 9))
                 .foregroundColor(.secondary.opacity(0.5))
         }
-        .padding(.horizontal, 8)
     }
 }
 
