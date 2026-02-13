@@ -50,10 +50,6 @@ struct EventDetailPopup: View {
                     // Close the popup
                     dismiss()
                     onClose?()
-                    // Then close the app after a short delay
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        NSApplication.shared.terminate(nil)
-                    }
                 }) {
                     HStack {
                         Image(systemName: "video.fill")
