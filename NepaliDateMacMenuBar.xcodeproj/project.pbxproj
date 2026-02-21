@@ -358,6 +358,11 @@
 					"$(PROJECT_DIR)/NepaliDaateMenuBar/Frameworks/BsCalendarCore.xcframework/macos-arm64_x86_64",
 				);
 				MARKETING_VERSION = 0.0.1;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-weak_framework",
+					"Sparkle",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = calendar.nepali.app;
 				PRODUCT_NAME = "BS Calendar (Bikram Sambat)";
 				REGISTER_APP_GROUPS = YES;
@@ -414,6 +419,11 @@
 					"$(PROJECT_DIR)/NepaliDaateMenuBar/Frameworks/BsCalendarCore.xcframework/macos-arm64_x86_64",
 				);
 				MARKETING_VERSION = 0.0.1;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-weak_framework",
+					"Sparkle",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = calendar.nepali.app;
 				PRODUCT_NAME = "BS Calendar (Bikram Sambat)";
 				REGISTER_APP_GROUPS = YES;
