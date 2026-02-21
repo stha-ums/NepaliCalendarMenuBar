@@ -1,6 +1,6 @@
 Stay connected to the Nepali calendar right from your macOS menu bar.
 
-Nepali Date Mac Menu Bar is a beautiful, lightweight utility designed to make viewing Bikram Sambat (BS) dates seamless on your Mac. Whether you need to check today's Nepali date at a glance or plan around important dates, this app has you covered.
+BS Calendar is a beautiful, lightweight utility designed to make viewing Bikram Sambat (BS) dates seamless on your Mac. Whether you need to check today's Nepali date at a glance or plan around important dates, this app has you covered.
 
 Key Features:
 *   Menu Bar Access: See the current Nepali date, day, and month instantly in your menu bar.

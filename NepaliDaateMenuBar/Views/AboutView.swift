@@ -23,7 +23,7 @@ struct AboutView: View {
                             )
                         )
                     
-                    Text("Nepali Date Mac Menu Bar")
+                    Text("BS Calendar")
                         .font(.title2.weight(.bold))
                     
                     Text("Version \(Bundle.main.appVersion) (\(Bundle.main.buildNumber))")
@@ -106,7 +106,7 @@ struct AboutView: View {
                 Spacer()
                 
                 // Copyright
-                Text("© 2026 Nepali Date Mac Menu Bar\nAll rights reserved")
+                Text("© 2026 BS Calendar\nAll rights reserved")
                     .font(.caption2)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)

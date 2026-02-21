@@ -8,6 +8,7 @@
 import AppKit
 import SwiftUI
 import Combine
+import Sentry
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     static private(set) var shared: AppDelegate!
@@ -51,10 +52,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             // Hide dock icon
             NSApp.setActivationPolicy(.accessory)
             
+            // Initialize Sentry (before other services so it captures their errors)
+            SentryManager.shared.setup()
+            
             // Initialize Telemetry
             TelemetryManager.shared.setup()
             
+            SentryManager.shared.log("App launched — menu bar mode", level: .info)
+            
             // Setup menu bar
+            SentryManager.shared.trackNavigation(to: "menu_bar")
             self.setupMenuBar()
         }
     }
@@ -91,6 +98,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     NSApp.activate(ignoringOtherApps: true)
                     popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
                     TelemetryManager.shared.track("popover.opened")
+                    SentryManager.shared.trackNavigation(to: "popover")
                 }
             }
         }
@@ -105,6 +113,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(NSMenuItem(title: "Settings", action: #selector(openSettings), keyEquivalent: ","))
         menu.addItem(NSMenuItem(title: "About", action: #selector(openAbout), keyEquivalent: ""))
+        
+        #if DEBUG
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(NSMenuItem(title: "Trigger Crash", action: #selector(triggerCrash), keyEquivalent: ""))
+        #endif
+        
         menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(quitApp), keyEquivalent: "q"))
         
@@ -133,6 +147,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 existingWindow.level = .normal
             }
             popover?.performClose(nil)
+            SentryManager.shared.trackUserAction("reopen_about_window")
             return
         }
         
@@ -165,6 +180,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.makeKeyAndOrderFront(nil)
         
         TelemetryManager.shared.track("window.about.opened")
+        SentryManager.shared.trackNavigation(to: "about_window")
         
         // Reset to normal level after window is shown
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -197,6 +213,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 existingWindow.level = .normal
             }
             popover?.performClose(nil)
+            SentryManager.shared.trackUserAction("reopen_settings_window")
             return
         }
         
@@ -234,6 +251,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.makeKeyAndOrderFront(nil)
         
         TelemetryManager.shared.track("window.settings.opened")
+        SentryManager.shared.trackNavigation(to: "settings_window")
         
         // Reset to normal level after window is shown
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -246,6 +264,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @objc func quitApp() {
         NSApplication.shared.terminate(nil)
+    }
+    
+    @objc func triggerCrash() {
+        SentryManager.shared.trackUserAction("trigger_crash")
+        SentryManager.shared.crash()
     }
     
     // MARK: - Onboarding
@@ -291,10 +314,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             window.makeKeyAndOrderFront(nil)
             NSApp.activate(ignoringOtherApps: true)
             
+            SentryManager.shared.trackNavigation(to: "onboarding")
+            SentryManager.shared.log("Onboarding started", level: .info)
+            
             // Listen for onboarding completion
             OnboardingManager.shared.$hasCompletedOnboarding
                 .sink { [weak self] completed in
                     if completed {
+                        SentryManager.shared.log("Onboarding completed", level: .info)
                         self?.onboardingWindow?.close()
                         self?.onboardingWindow = nil
                         
@@ -393,6 +420,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         guard let button = statusBarItem?.button,
               let nepaliDate = NepaliDateConverter.getCurrentNepaliDate() else {
             statusBarItem?.button?.title = "Nepali Date"
+            SentryManager.shared.log("Date display update failed — could not get Nepali date", level: .warning)
             return
         }
         
@@ -439,6 +467,7 @@ extension AppDelegate: NSPopoverDelegate {
     func popoverDidClose(_ notification: Notification) {
         // Popover closed
         TelemetryManager.shared.track("popover.closed")
+        SentryManager.shared.trackUserAction("popover_closed")
     }
 }
 

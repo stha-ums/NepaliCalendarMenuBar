@@ -55,6 +55,14 @@ Release to App Store
 
 Release to TestFlight
 
+### mac verify_sentry
+
+```sh
+[bundle exec] fastlane mac verify_sentry
+```
+
+Verify Sentry connection and dSYM upload
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.

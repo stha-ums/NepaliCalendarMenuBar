@@ -1,9 +1,13 @@
 default_platform(:mac)
 
 platform :mac do
+  before_all do
+    load_xcconfig_secrets("../Secrets.xcconfig")
+  end
+
   desc "Run tests"
   lane :test do
-    run_tests(scheme: "NepaliDateMacMenuBar")
+    run_tests(scheme: "BS Calendar (Bikram Sambat)")
   end
 
   desc "Build for GitHub Release (Notarized)"
@@ -30,11 +34,11 @@ platform :mac do
     
     # Build and Archive with version injection
     gym(
-      scheme: "NepaliDateMacMenuBar",
+      scheme: "BS Calendar (Bikram Sambat)",
       export_method: "developer-id",
       export_options: "./ExportOptions_DevID.plist",
       output_directory: "./output",
-      output_name: "NepaliDateMacMenuBar",
+      output_name: "BS Calendar (Bikram Sambat)",
       codesigning_identity: "Developer ID Application",
       xcargs: "ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO MARKETING_VERSION=#{version} CURRENT_PROJECT_VERSION=#{build_number} OTHER_CODE_SIGN_FLAGS='--timestamp' OTHER_SWIFT_FLAGS='-D SPARKLE' DEVELOPMENT_TEAM=4DRNCBN798 CODE_SIGN_STYLE=Manual",
       verbose: true
@@ -42,7 +46,7 @@ platform :mac do
 
     # Notarize using App Store Connect API
     notarize(
-      package: "./output/NepaliDateMacMenuBar.app",
+      package: "./output/BS Calendar (Bikram Sambat).app",
       bundle_id: "calendar.nepali.app",
       api_key_path: "./app_store_connect_api_key.json",
       print_log: true
@@ -52,17 +56,17 @@ platform :mac do
     sh "brew install create-dmg || true"
     dmg_source = "../dmg_source"
     sh "rm -rf #{dmg_source} && mkdir -p #{dmg_source}"
-    sh "cp -R ../output/NepaliDateMacMenuBar.app #{dmg_source}/"
+    sh "cp -R \"../output/BS Calendar (Bikram Sambat).app\" #{dmg_source}/"
     
     sh "create-dmg \
-      --volname 'Nepali Date Mac Menu Bar' \
+      --volname 'BS Calendar (Bikram Sambat)' \
       --window-pos 200 120 \
       --window-size 600 400 \
       --icon-size 100 \
-      --icon 'NepaliDateMacMenuBar.app' 175 190 \
+      --icon \"BS Calendar (Bikram Sambat).app\" 175 190 \\
       --app-drop-link 425 190 \
       --no-internet-enable \
-      '../output/NepaliDateMacMenuBar.dmg' \
+      \"../output/BS Calendar (Bikram Sambat).dmg\" \\
       '#{dmg_source}/'"
       
     # Find generate_appcast tool
@@ -88,7 +92,7 @@ platform :mac do
       output_abs_path = File.expand_path('../output/')
       
       # Clean up duplicate zip files that cause sparkle to fail
-      zip_file = File.join(output_abs_path, "NepaliDateMacMenuBar.app.zip")
+      zip_file = File.join(output_abs_path, "BS Calendar (Bikram Sambat).app.zip")
       if File.exist?(zip_file)
         UI.message("Removing duplicate zip file: #{zip_file}")
         File.delete(zip_file)
@@ -98,6 +102,14 @@ platform :mac do
     else
       UI.error("Could not find Sparkle's appcast generation tool. Skipping appcast generation.")
     end
+
+    # Upload dSYMs and source context to Sentry
+    sentry_debug_files_upload(
+      auth_token: ENV["SENTRY_AUTH_TOKEN"],
+      org_slug: ENV["SENTRY_ORG"],
+      project_slug: ENV["SENTRY_PROJECT"],
+      include_sources: true
+    )
 
     # Reset to automatic code signing for local development
     update_code_signing_settings(
@@ -137,18 +149,26 @@ platform :mac do
 
     # Build and Archive with version injection
     gym(
-      scheme: "NepaliDateMacMenuBar",
+      scheme: "BS Calendar (Bikram Sambat)",
       export_method: "app-store",
       export_options: "./ExportOptions_AppStore.plist",
       output_directory: "./output",
-      output_name: "NepaliDateMacMenuBar",
+      output_name: "BS Calendar (Bikram Sambat)",
       xcargs: "ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO MARKETING_VERSION=#{version}"
+    )
+    
+    # Upload dSYMs and source context to Sentry
+    sentry_debug_files_upload(
+      auth_token: ENV["SENTRY_AUTH_TOKEN"],
+      org_slug: ENV["SENTRY_ORG"],
+      project_slug: ENV["SENTRY_PROJECT"],
+      include_sources: true
     )
 
     # Upload to App Store
     deliver(
       force: true, # Skip HTML report verification
-      pkg: "./output/NepaliDateMacMenuBar.pkg",
+      pkg: "./output/BS Calendar (Bikram Sambat).pkg",
       metadata_path: "./fastlane/metadata",
       screenshots_path: "./fastlane/screenshots",
       platform: "osx",
@@ -187,20 +207,52 @@ platform :mac do
 
     # Build and Archive with version injection
     gym(
-      scheme: "NepaliDateMacMenuBar",
+      scheme: "BS Calendar (Bikram Sambat)",
       export_method: "app-store",
       export_options: "./ExportOptions_AppStore.plist",
       output_directory: "./output",
-      output_name: "NepaliDateMacMenuBar",
+      output_name: "BS Calendar (Bikram Sambat)",
       xcargs: "ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO MARKETING_VERSION=#{version}"
+    )
+
+    # Upload dSYMs and source context to Sentry
+    sentry_debug_files_upload(
+      auth_token: ENV["SENTRY_AUTH_TOKEN"],
+      org_slug: ENV["SENTRY_ORG"],
+      project_slug: ENV["SENTRY_PROJECT"],
+      include_sources: true
     )
 
     # Upload to TestFlight only (skip review submission)
     upload_to_testflight(
-      pkg: "./output/NepaliDateMacMenuBar.pkg",
+      pkg: "./output/BS Calendar (Bikram Sambat).pkg",
       api_key_path: "./app_store_connect_api_key.json",
       skip_submission: true,  # Don't submit for review
       skip_waiting_for_build_processing: false  # Wait for processing
     )
+  end
+
+  desc "Verify Sentry connection and dSYM upload"
+  lane :verify_sentry do
+    sentry_debug_files_upload(
+      auth_token: ENV["SENTRY_AUTH_TOKEN"],
+      org_slug: ENV["SENTRY_ORG"],
+      project_slug: ENV["SENTRY_PROJECT"],
+      include_sources: true
+    )
+  end
+end
+
+# Helper to load secrets from .xcconfig files for local development
+def load_xcconfig_secrets(path)
+  return unless File.exist?(path)
+  UI.important("Loading secrets from #{path}")
+  File.foreach(path) do |line|
+    next if line.strip.empty? || line.strip.start_with?("//")
+    if line.include?("=")
+      key, value = line.split("=", 2).map(&:strip)
+      # Only set if not already present (don't override CI env vars)
+      ENV[key] ||= value
+    end
   end
 end

@@ -36,7 +36,7 @@ class NepaliDateConverter {
             }
             return nepaliDate
         } catch {
-            print("Error converting AD to BS: \(error)")
+            SentryManager.shared.captureError(error)
             return nil
         }
     }
@@ -53,7 +53,7 @@ class NepaliDateConverter {
             calendar.timeZone = TimeZone.current
             return calendar.date(from: DateComponents(year: Int(gDate.year), month: Int(gDate.month), day: Int(gDate.day)))
         } catch {
-            print("Error converting BS to AD: \(error)")
+            SentryManager.shared.captureError(error)
             return nil
         }
     }
@@ -72,7 +72,7 @@ class NepaliDateConverter {
             let monthData = try engine.getMonthCalendar(year: UInt16(year), month: UInt8(month), location: dummyLocation)
             return Int(monthData.daysInMonth)
         } catch {
-            print("Error getting days in month: \(error)")
+            SentryManager.shared.captureError(error)
             return 30 // Fallback
         }
     }
@@ -132,7 +132,7 @@ class NepaliDateConverter {
             
             return grid
         } catch {
-            print("Error getting month calendar data: \(error)")
+            SentryManager.shared.captureError(error)
             return []
         }
     }
@@ -155,7 +155,7 @@ class NepaliDateConverter {
             let tithi = try engine.getTithi(date: gDate)
             return engine.getTithiName(tithi: tithi, lang: engineLang)
         } catch {
-            print("Error getting Tithi name: \(error)")
+            SentryManager.shared.captureError(error)
             return nil
         }
     }

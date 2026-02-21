@@ -80,7 +80,7 @@ class LaunchOnLoginManager: ObservableObject {
                     try SMAppService.mainApp.unregister()
                 }
             } catch {
-                print("Failed to \(enabled ? "enable" : "disable") launch on login: \(error.localizedDescription)")
+                SentryManager.shared.captureError(error, extra: ["enabled": enabled])
             }
         }
         // For older macOS, user needs to manually add via System Settings

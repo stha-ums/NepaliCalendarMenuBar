@@ -22,5 +22,7 @@
 	<string>https://github.com/stha-ums/NepaliCalendarMenuBar/releases/latest/download/appcast.xml</string>
 	<key>TelemetryAppID</key>
 	<string>$(TELEMETRY_APP_ID)</string>
+	<key>SentryDSN</key>
+	<string>$(SENTRY_DSN)</string>
 </dict>
 </plist>

@@ -75,7 +75,7 @@ class UpdateManager: NSObject, ObservableObject {
                     }
                 }
             } catch {
-                print("Error checking App Store: \(error)")
+                SentryManager.shared.captureError(error)
             }
         }
     }

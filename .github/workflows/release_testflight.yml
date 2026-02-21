@@ -21,7 +21,11 @@ jobs:
         run: ./scripts/setup-dependencies.sh
 
       - name: Setup Secrets.xcconfig
-        run: echo "TELEMETRY_APP_ID = ${{ secrets.TELEMETRY_APP_ID }}" > Secrets.xcconfig
+        run: |
+          echo "TELEMETRY_APP_ID = ${{ secrets.TELEMETRY_APP_ID }}" > Secrets.xcconfig
+          echo "SENTRY_DSN = ${{ secrets.SENTRY_DSN }}" >> Secrets.xcconfig
+          echo "SENTRY_ORG = ${{ secrets.SENTRY_ORG }}" >> Secrets.xcconfig
+          echo "SENTRY_PROJECT = ${{ secrets.SENTRY_PROJECT }}" >> Secrets.xcconfig
 
       - name: Setup Fastlane
         uses: ruby/setup-ruby@v1
@@ -55,6 +59,9 @@ jobs:
           APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
           APP_STORE_CONNECT_API_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_API_PRIVATE_KEY }}
           TELEMETRY_APP_ID: ${{ secrets.TELEMETRY_APP_ID }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         run: |
           # Generate MATCH_GIT_BASIC_AUTHORIZATION from PAT
           export MATCH_GIT_BASIC_AUTHORIZATION=$(echo -n "stha-ums:${{ secrets.PAT }}" | base64)

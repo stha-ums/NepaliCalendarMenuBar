@@ -367,6 +367,7 @@ struct NepaliCalendarView: View {
         let calendar = Calendar.current
         if viewMode == .month {
             currentDate = calendar.date(byAdding: .month, value: -1, to: currentDate) ?? currentDate
+            SentryManager.shared.trackUserAction("previous_month")
         }
         // No action needed for Agenda view
     }
@@ -375,6 +376,7 @@ struct NepaliCalendarView: View {
         let calendar = Calendar.current
         if viewMode == .month {
             currentDate = calendar.date(byAdding: .month, value: 1, to: currentDate) ?? currentDate
+            SentryManager.shared.trackUserAction("next_month")
         }
         // No action needed for Agenda view
     }
@@ -500,6 +502,7 @@ struct NepaliCalendarView: View {
         if selectedEvent?.eventIdentifier == event.eventIdentifier {
             selectedEvent = nil
             pendingEvent = nil
+            SentryManager.shared.trackUserAction("close_event_detail")
         } else if selectedEvent != nil {
             // If another event is already open, we store the new one as pending
             // and close the current one. The swap will happen in onDisappear.
@@ -515,6 +518,7 @@ struct NepaliCalendarView: View {
             
             // Track opening the event
             TelemetryManager.shared.track("calendar.event.opened")
+            SentryManager.shared.trackUserAction("open_event_detail", extra: ["title": event.title ?? "Untitled"])
         }
     }
     

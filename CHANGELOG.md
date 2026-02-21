@@ -55,7 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Initial Release
 
-This is the first release of Nepali Date Mac Menu Bar.
+This is the first release of BS Calendar.
 
 ### Features
 - Dual calendar system (Bikram Sambat and Gregorian)
@@ -71,7 +71,7 @@ This is the first release of Nepali Date Mac Menu Bar.
 ## [0.0.1] - 2025-01-17
 
 ### Added
-- Initial release of Nepali Date Mac Menu Bar
+- Initial release of BS Calendar
 - Dual calendar system (Bikram Sambat and Gregorian)
 - Multi-language support (English and Nepali)
 - Multiple view modes (Monthly grid and Schedule timeline)

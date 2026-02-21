@@ -45,6 +45,7 @@ class CalendarEventManager: ObservableObject {
             } catch {
                 await MainActor.run {
                     checkAuthorizationStatus()
+                    SentryManager.shared.captureError(error)
                 }
                 return false
             }
@@ -60,6 +61,7 @@ class CalendarEventManager: ObservableObject {
             } catch {
                 await MainActor.run {
                     checkAuthorizationStatus()
+                    SentryManager.shared.captureError(error)
                 }
                 return false
             }
