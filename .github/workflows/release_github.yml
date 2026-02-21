@@ -54,7 +54,7 @@ jobs:
 
       - name: Install Sparkle Tools
         run: |
-          DOWNLOAD_URL=$(curl -s https://api.github.com/repos/sparkle-project/Sparkle/releases/latest | jq -r '.assets[] | select(.name | endswith(".tar.xz")) | .browser_download_url')
+          DOWNLOAD_URL=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/sparkle-project/Sparkle/releases/latest | jq -r '.assets[] | select(.name | endswith(".tar.xz")) | .browser_download_url')
           curl -L -o Sparkle.tar.xz "$DOWNLOAD_URL"
           mkdir sparkle-tools
           tar -xf Sparkle.tar.xz -C sparkle-tools

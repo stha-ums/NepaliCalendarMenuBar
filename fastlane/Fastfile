@@ -3,6 +3,8 @@ default_platform(:mac)
 platform :mac do
   before_all do
     load_xcconfig_secrets("../Secrets.xcconfig")
+    @project_root = File.expand_path('..', File.dirname(__FILE__))
+    @output_dir = File.join(@project_root, 'output')
   end
 
   desc "Run tests"
@@ -37,7 +39,7 @@ platform :mac do
       scheme: "BS Calendar (Bikram Sambat)",
       export_method: "developer-id",
       export_options: "./ExportOptions_DevID.plist",
-      output_directory: "./output",
+      output_directory: @output_dir,
       output_name: "BS Calendar (Bikram Sambat)",
       codesigning_identity: "Developer ID Application",
       xcargs: "ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO MARKETING_VERSION=#{version} CURRENT_PROJECT_VERSION=#{build_number} OTHER_CODE_SIGN_FLAGS='--timestamp' OTHER_SWIFT_FLAGS='-D SPARKLE' DEVELOPMENT_TEAM=4DRNCBN798 CODE_SIGN_STYLE=Manual",
@@ -46,7 +48,7 @@ platform :mac do
 
     # Notarize using App Store Connect API
     notarize(
-      package: "./output/BS Calendar (Bikram Sambat).app",
+      package: File.join(@output_dir, "BS Calendar (Bikram Sambat).app"),
       bundle_id: "calendar.nepali.app",
       api_key_path: "./app_store_connect_api_key.json",
       print_log: true
@@ -54,9 +56,9 @@ platform :mac do
 
     # Create DMG
     sh "brew install create-dmg || true"
-    dmg_source = "./dmg_source"
-    sh "rm -rf #{dmg_source} && mkdir -p #{dmg_source}"
-    sh "cp -R \"./output/BS Calendar (Bikram Sambat).app\" #{dmg_source}/"
+    dmg_source_dir = File.join(@project_root, "dmg_source")
+    sh "rm -rf \"#{dmg_source_dir}\" && mkdir -p \"#{dmg_source_dir}\""
+    sh "cp -R \"#{File.join(@output_dir, "BS Calendar (Bikram Sambat).app")}\" \"#{dmg_source_dir}/\""
     
     sh "create-dmg \
       --volname 'BS Calendar (Bikram Sambat)' \
@@ -66,8 +68,8 @@ platform :mac do
       --icon \"BS Calendar (Bikram Sambat).app\" 175 190 \\
       --app-drop-link 425 190 \
       --no-internet-enable \
-      \"./output/BS Calendar (Bikram Sambat).dmg\" \\
-      '#{dmg_source}/'"
+      \"#{File.join(@output_dir, "BS Calendar (Bikram Sambat).dmg")}\" \\
+      \"#{dmg_source_dir}/\""
       
     # Find generate_appcast tool
     sparkle_bin = nil
@@ -88,17 +90,14 @@ platform :mac do
     end
 
     if sparkle_bin
-      # Using absolute path for output to be safe in CI
-      output_abs_path = File.expand_path('./output/')
-      
       # Clean up duplicate zip files that cause sparkle to fail
-      zip_file = File.join(output_abs_path, "BS Calendar (Bikram Sambat).app.zip")
+      zip_file = File.join(@output_dir, "BS Calendar (Bikram Sambat).app.zip")
       if File.exist?(zip_file)
         UI.message("Removing duplicate zip file: #{zip_file}")
         File.delete(zip_file)
       end
 
-      sh "#{sparkle_bin} \"#{output_abs_path}\""
+      sh "#{sparkle_bin} \"#{@output_dir}\""
     else
       UI.error("Could not find Sparkle's appcast generation tool. Skipping appcast generation.")
     end
