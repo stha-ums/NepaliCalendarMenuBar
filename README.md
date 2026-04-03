@@ -85,6 +85,7 @@ The app is now **completely FREE** on both the Mac App Store and GitHub!
 **Want to support development?**
 
 If you find this app useful, please:
+
 - ⭐ Star this repository on GitHub
 - 📝 Leave a review on the Mac App Store
 - 🐛 Report bugs or suggest features via [Issues](https://github.com/stha-ums/NepaliCalendarMenuBar/issues)
@@ -175,6 +176,7 @@ Yes! The GitHub release is **signed and notarized** with an Apple Developer ID. 
 This project uses a proprietary core engine. To build it yourself:
 
 1. **Clone** the repository:
+
    ```bash
    git clone https://github.com/stha-ums/NepaliCalendarMenuBar.git
    cd NepaliCalendarMenuBar
@@ -182,6 +184,7 @@ This project uses a proprietary core engine. To build it yourself:
 
 2. **Fetch Dependencies**:
    The core engine is hosted in a private repository. You will need a GitHub Personal Access Token (PAT) with `repo` scope to download the necessary binaries:
+
    ```bash
    export GITHUB_TOKEN=your_token_here
    ./scripts/setup-dependencies.sh
@@ -197,9 +200,10 @@ This project uses a proprietary core engine. To build it yourself:
 
 ## Privacy & Telemetry
 
-We value your privacy. This app uses **[TelemetryDeck](https://telemetrydeck.com/)** to collect anonymous usage data. 
+We value your privacy. This app uses **[TelemetryDeck](https://telemetrydeck.com/)** to collect anonymous usage data.
 
 **What we collect:**
+
 - App version and update preferences.
 - Feature usage (e.g., how often the calendar is opened, which language is used).
 - Interactions with the calendar (e.g., viewing event details, joining meetings).
@@ -221,16 +225,6 @@ Licensed under **GNU General Public License v3.0** - see [LICENSE](LICENSE) file
 - **Feature Requests**: [Request features](https://github.com/stha-ums/NepaliCalendarMenuBar/issues)
 
 ---
-
-## Acknowledgments
-
-**[pyBSDate](https://github.com/SushilShrestha/pyBSDate)** by Sushil Shrestha - Date conversion algorithm (MIT License)
-
----
-
-<div align="center">
-
-**Made with love for the Nepali community worldwide**
 
 [Back to Top](#bs-calendar-bikram-sambat)
 

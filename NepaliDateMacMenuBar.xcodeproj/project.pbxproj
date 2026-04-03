@@ -332,6 +332,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 4DRNCBN798;
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = 4DRNCBN798;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -361,7 +362,7 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-weak_framework",
-					"Sparkle",
+					Sparkle,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = calendar.nepali.app;
 				PRODUCT_NAME = "BS Calendar (Bikram Sambat)";
@@ -393,6 +394,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 4DRNCBN798;
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = 4DRNCBN798;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -422,7 +424,7 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-weak_framework",
-					"Sparkle",
+					Sparkle,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = calendar.nepali.app;
 				PRODUCT_NAME = "BS Calendar (Bikram Sambat)";
