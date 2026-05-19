@@ -11,7 +11,7 @@ enum Constants {
     // MARK: - Window Sizes
     enum Window {
         static let popoverWidth: CGFloat = 360
-        static let popoverHeight: CGFloat = 538
+        static let popoverHeight: CGFloat = 578
         static let settingsWidth: CGFloat = 400
         static let settingsHeight: CGFloat = 500
         static let onboardingWidth: CGFloat = 420

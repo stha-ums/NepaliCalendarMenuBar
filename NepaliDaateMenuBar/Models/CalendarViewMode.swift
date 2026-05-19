@@ -12,3 +12,7 @@ enum CalendarViewMode: String, CaseIterable {
     case agenda = "Agenda"
 }
 
+extension Notification.Name {
+    static let popoverDidClose = Notification.Name("NepaliDateMenuBar.popoverDidClose")
+}
+

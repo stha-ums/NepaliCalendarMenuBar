@@ -78,42 +78,21 @@ struct NepaliCalendarView: View {
             if viewMode == .month {
                 VStack(spacing: 0) {
                     monthGridView(selectedEvent: $selectedEvent)
-                    
-                    Spacer()
-                    
-                    // Selected date info at the bottom left
-                    if let nepaliDate = displayedNepaliDate {
-                        HStack(alignment: .bottom) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack(alignment: .center, spacing: 8) {
-                                    Text(nepaliDate.fullFormattedDate(with: currentDate))
-                                        .font(.system(size: 16, weight: .bold))
-                                        .foregroundColor(.primary)
-                                    
-                                    if let tithi = NepaliDateConverter.getTithiName(for: currentDate) {
-                                        Text(tithi)
-                                            .font(.system(size: 10, weight: .bold))
-                                            .padding(.horizontal, 6)
-                                            .padding(.vertical, 2)
-                                            .background(Color.accentColor.opacity(0.1))
-                                            .foregroundColor(.accentColor)
-                                            .cornerRadius(6)
-                                    }
-                                }
-                                
-                                Text(formatFullGregorianDate(currentDate))
-                                    .font(.system(size: 11, weight: .medium))
-                                    .foregroundColor(.secondary)
-                            }
-                            .padding(.leading, 16)
-                            .padding(.bottom, 10)
-                            
-                             Spacer()
-                        }
-                    }
-            footerView
-            .padding(.horizontal, 12)
-            .padding(.bottom, 12)
+                        .padding(.bottom, 8)
+
+                    Divider()
+
+                    // Selected date agenda panel
+                    SelectedDayAgendaPanel(
+                        currentDate: currentDate,
+                        selectedDate: selectedDate,
+                        events: getEvents(for: selectedDate),
+                        onEventSelect: selectEvent
+                    )
+
+                    footerView
+                        .padding(.horizontal, 12)
+                        .padding(.bottom, 12)
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)
@@ -156,37 +135,79 @@ struct NepaliCalendarView: View {
         .onChange(of: eventManager.authorizationStatus) { _ in
             loadEvents()
         }
+        .onReceive(NotificationCenter.default.publisher(for: .popoverDidClose)) { _ in
+            viewMode = .month
+            currentDate = Date()
+            selectedDate = currentNepaliDate
+        }
     }
     
     // MARK: - Header
     
     private var headerView: some View {
-        HStack(spacing: 12) {
-            // New custom view mode switcher
-            ViewModeSwitcher(selection: $viewMode)
-            
-            Spacer()
-            
-            HStack(spacing: 10) {
-                if viewMode == .month {
-                    HeaderIconButton(icon: "chevron.left", action: previousPeriod)
-                }
-                
-                TodayButton {
-                    currentDate = Date()
-                    selectedDate = currentNepaliDate
-                    
-                    TelemetryManager.shared.track("button.today.clicked", with: ["mode": viewMode.rawValue])
-                    
-                    if viewMode == .agenda {
-                        withAnimation {
-                            scrollProxy?.scrollTo(agendaScrollAnchor, anchor: .top)
+        VStack(alignment: .leading, spacing: 10) {
+            // Month + year (left) | today's full date + tithi (right)
+            if let nepaliDate = displayedNepaliDate {
+                HStack(alignment: .center) {
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text(nepaliDate.monthName)
+                            .font(.system(size: 22, weight: .bold))
+                            .foregroundColor(.primary)
+                        Text(NumeralConverter.convert(nepaliDate.year, for: LanguageSettings.shared.language))
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundColor(.secondary)
+                    }
+
+                    Spacer()
+
+                    if let today = currentNepaliDate {
+                        VStack(alignment: .trailing, spacing: 2) {
+                            Text(today.fullFormattedDate(with: Date()))
+                                .font(.system(size: 10, weight: .medium))
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.trailing)
+
+                            if let tithi = NepaliDateConverter.getTithiName(for: Date()) {
+                                Text(tithi)
+                                    .font(.system(size: 10, weight: .bold))
+                                    .padding(.horizontal, 5)
+                                    .padding(.vertical, 2)
+                                    .background(Color.accentColor.opacity(0.1))
+                                    .foregroundColor(.accentColor)
+                                    .cornerRadius(5)
+                            }
                         }
                     }
                 }
-                
-                if viewMode == .month {
-                    HeaderIconButton(icon: "chevron.right", action: nextPeriod)
+            }
+
+            // Tabs + navigation
+            HStack(spacing: 12) {
+                ViewModeSwitcher(selection: $viewMode)
+
+                Spacer()
+
+                HStack(spacing: 10) {
+                    if viewMode == .month {
+                        HeaderIconButton(icon: "chevron.left", action: previousPeriod)
+                    }
+
+                    TodayButton {
+                        currentDate = Date()
+                        selectedDate = currentNepaliDate
+
+                        TelemetryManager.shared.track("button.today.clicked", with: ["mode": viewMode.rawValue])
+
+                        if viewMode == .agenda {
+                            withAnimation {
+                                scrollProxy?.scrollTo(agendaScrollAnchor, anchor: .top)
+                            }
+                        }
+                    }
+
+                    if viewMode == .month {
+                        HeaderIconButton(icon: "chevron.right", action: nextPeriod)
+                    }
                 }
             }
         }
@@ -299,67 +320,6 @@ struct NepaliCalendarView: View {
     // Removed: checkAndLoadMore()
     // Removed: loadMorePastEvents()
     // Removed: loadMoreFutureEvents()
-    
-    // MARK: - Selected Day Events (for Month View)
-    
-    @ViewBuilder
-    private func selectedDayEventsView(for nepaliDate: NepaliDate) -> some View {
-        let dayEvents = getEvents(for: nepaliDate)
-        
-        VStack(alignment: .leading, spacing: 6) {
-            Divider()
-            
-            HStack(alignment: .center, spacing: 6) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(nepaliDate.fullFormattedDate(with: NepaliDateConverter.convertNepaliToGregorian(nepaliDate: nepaliDate)))
-                        .font(.subheadline.weight(.semibold))
-                    
-                    if let gregorianDate = NepaliDateConverter.convertNepaliToGregorian(nepaliDate: nepaliDate) {
-                        Text(formatFullGregorianDate(gregorianDate))
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
-                
-                Spacer()
-                
-                if !dayEvents.isEmpty {
-                    Text("\(dayEvents.count)")
-                        .font(.caption2)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Capsule().fill(Color.accentColor))
-                }
-            }
-            .padding(.horizontal, 4)
-            .padding(.top, 4)
-            
-            if dayEvents.isEmpty {
-                Text("No events")
-                    .font(.system(size: 10))
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 6)
-            } else {
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        // Use enumerated to ensure unique IDs
-                        ForEach(Array(dayEvents.enumerated()), id: \.offset) { index, event in
-                                    CompactEventRow(event: event) {
-                                        selectEvent(event)
-                                    }
-                                }
-                       
-                    }
-                    .padding(.vertical, 4)
-                    .frame(maxWidth: .infinity, alignment: .leading) // Ensures content stays left
-                }
-                
-                
-            }
-        }
-    }
     
     // MARK: - Helpers
     

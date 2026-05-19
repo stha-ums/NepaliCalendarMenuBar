@@ -468,6 +468,7 @@ extension AppDelegate: NSPopoverDelegate {
         // Popover closed
         TelemetryManager.shared.track("popover.closed")
         SentryManager.shared.trackUserAction("popover_closed")
+        NotificationCenter.default.post(name: .popoverDidClose, object: nil)
     }
 }
 

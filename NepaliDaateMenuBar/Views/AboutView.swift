@@ -2,130 +2,216 @@
 //  AboutView.swift
 //  NepaliDaateMenuBar
 //
-//  About and credits view
-//
 
 import SwiftUI
 
 struct AboutView: View {
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                // App icon and title
+        VStack(spacing: 0) {
+            // Hero
+            ZStack {
+                LinearGradient(
+                    colors: [Color.accentColor.opacity(0.12), Color.accentColor.opacity(0.03)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+
                 VStack(spacing: 12) {
-                    Image(systemName: "calendar.badge.clock")
-                        .font(.system(size: 56))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [Color.accentColor, Color.accentColor.opacity(0.6)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 22, style: .continuous)
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color.accentColor, Color.accentColor.opacity(0.7)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
                             )
-                        )
-                    
-                    Text("BS Calendar")
-                        .font(.title2.weight(.bold))
-                    
-                    Text("Version \(Bundle.main.appVersion) (\(Bundle.main.buildNumber))")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                            .frame(width: 72, height: 72)
+                            .shadow(color: Color.accentColor.opacity(0.35), radius: 12, x: 0, y: 6)
+
+                        Image(systemName: "calendar")
+                            .font(.system(size: 34, weight: .semibold))
+                            .foregroundColor(.white)
+                    }
+
+                    VStack(spacing: 4) {
+                        Text("BS Calendar")
+                            .font(.system(size: 22, weight: .bold))
+
+                        Text("Bikram Sambat")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(.secondary)
+
+                        Text("Version \(Bundle.main.appVersion) (\(Bundle.main.buildNumber))")
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary.opacity(0.7))
+                            .padding(.top, 2)
+                    }
                 }
-                .padding(.top, 20)
-                
-                Divider()
-                
-                // Description
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("About")
-                        .font(.headline)
-                    
-                    Text("A minimal macOS menu bar application that displays Nepali (Bikram Sambat) dates with integrated calendar event viewing.")
-                        .font(.body)
-                        .foregroundColor(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                
-                Divider()
-                
-                // License
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("License")
-                        .font(.headline)
-                    
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("GPL v3 - GNU General Public License")
-                            .font(.subheadline.weight(.medium))
-                        
-                        Text("This software is free to use and modify. Commercial distribution requires contribution back to the project.")
-                            .font(.caption)
+                .padding(.vertical, 32)
+            }
+
+            Divider()
+
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+                    // About
+                    AboutSection(icon: "info.circle", title: "About") {
+                        Text("A minimal macOS menu bar app that displays Nepali (Bikram Sambat) dates with integrated calendar event viewing.")
+                            .font(.system(size: 12))
                             .foregroundColor(.secondary)
                             .fixedSize(horizontal: false, vertical: true)
-                        
-                        Link("View Full License", destination: URL(string: "https://www.gnu.org/licenses/gpl-3.0.txt")!)
-                            .font(.caption)
+                            .lineSpacing(3)
                     }
-                    .padding(12)
-                    .background(Color(NSColor.controlBackgroundColor).opacity(0.3))
-                    .cornerRadius(8)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                
-                Divider()
-                
-                // Links
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Resources")
-                        .font(.headline)
-                    
-                    VStack(spacing: 6) {
-                        Link(destination: URL(string: "https://github.com/stha-ums/NepaliCalendarMenuBar")!) {
-                            HStack {
-                                Image(systemName: "chevron.left.forwardslash.chevron.right")
-                                Text("Source Code")
-                                Spacer()
-                                Image(systemName: "arrow.up.right")
-                                    .font(.caption2)
-                            }
-                        }
-                        
-                        Link(destination: URL(string: "https://github.com/stha-ums/NepaliCalendarMenuBar/issues")!) {
-                            HStack {
-                                Image(systemName: "exclamationmark.bubble")
-                                Text("Report an Issue")
-                                Spacer()
-                                Image(systemName: "arrow.up.right")
-                                    .font(.caption2)
-                            }
+
+                    AboutDivider()
+
+                    // License
+                    AboutSection(icon: "doc.text", title: "License") {
+                        AboutLinkRow(
+                            icon: "checkmark.seal",
+                            title: "GPL v3 — GNU General Public License",
+                            subtitle: "Free to use, modify, and distribute",
+                            url: URL(string: "https://www.gnu.org/licenses/gpl-3.0.txt")!
+                        )
+                    }
+
+                    AboutDivider()
+
+                    // Resources
+                    AboutSection(icon: "link", title: "Resources") {
+                        VStack(spacing: 6) {
+                            AboutLinkRow(
+                                icon: "chevron.left.forwardslash.chevron.right",
+                                title: "Source Code",
+                                subtitle: "github.com/stha-ums/NepaliCalendarMenuBar",
+                                url: URL(string: "https://github.com/stha-ums/NepaliCalendarMenuBar")!
+                            )
+                            AboutLinkRow(
+                                icon: "exclamationmark.bubble",
+                                title: "Report an Issue",
+                                subtitle: "Open a GitHub issue",
+                                url: URL(string: "https://github.com/stha-ums/NepaliCalendarMenuBar/issues")!
+                            )
                         }
                     }
-                    .font(.caption)
+
+                    AboutDivider()
+
+                    // Copyright
+                    Text("© 2026 BS Calendar · All rights reserved")
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary.opacity(0.6))
+                        .padding(.vertical, 16)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                
-                Spacer()
-                
-                // Copyright
-                Text("© 2026 BS Calendar\nAll rights reserved")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.bottom, 20)
             }
-            .padding(.horizontal, 24)
         }
         .frame(width: Constants.Window.aboutWidth, height: Constants.Window.aboutHeight)
     }
 }
 
+// MARK: - About Section
+
+private struct AboutSection<Content: View>: View {
+    let icon: String
+    let title: String
+    let content: Content
+
+    init(icon: String, title: String, @ViewBuilder content: () -> Content) {
+        self.icon = icon
+        self.title = title
+        self.content = content()
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 7) {
+                Image(systemName: icon)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.accentColor)
+                    .frame(width: 16)
+                Text(title.uppercased())
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundColor(.secondary)
+                    .tracking(0.5)
+            }
+            content
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 24)
+        .padding(.vertical, 16)
+    }
+}
+
+// MARK: - About Divider
+
+private struct AboutDivider: View {
+    var body: some View {
+        Divider().padding(.horizontal, 24)
+    }
+}
+
+// MARK: - About Link Row
+
+private struct AboutLinkRow: View {
+    let icon: String
+    let title: String
+    let subtitle: String
+    let url: URL
+    @State private var isHovered = false
+
+    var body: some View {
+        Link(destination: url) {
+            HStack(spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 7, style: .continuous)
+                        .fill(Color.accentColor.opacity(0.1))
+                        .frame(width: 30, height: 30)
+                    Image(systemName: icon)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.accentColor)
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.primary)
+                    Text(subtitle)
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "arrow.up.right")
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(.secondary.opacity(0.5))
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 9)
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(isHovered ? Color(NSColor.controlBackgroundColor) : Color.clear)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(isHovered ? Color.primary.opacity(0.08) : Color.clear, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovered = $0 }
+        .animation(.spring(response: 0.2, dampingFraction: 0.8), value: isHovered)
+    }
+}
+
 // MARK: - Bundle Extension
+
 extension Bundle {
     var appVersion: String {
         return infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
     }
-    
+
     var buildNumber: String {
         return infoDictionary?["CFBundleVersion"] as? String ?? "1"
     }
 }
-
