@@ -97,7 +97,20 @@ platform :mac do
         File.delete(zip_file)
       end
 
-      sh "#{sparkle_bin} \"#{@output_dir}\""
+      # Write the EdDSA private key from env to a temp file for signing
+      ed_key_file = "/tmp/sparkle_ed_private_key"
+      sparkle_private_key = ENV["SPARKLE_PRIVATE_KEY"]
+      if sparkle_private_key.nil? || sparkle_private_key.empty?
+        UI.error("SPARKLE_PRIVATE_KEY env var is not set — appcast will be unsigned and Sparkle will reject updates!")
+        sh "#{sparkle_bin} \"#{@output_dir}\""
+      else
+        File.write(ed_key_file, sparkle_private_key.strip)
+        begin
+          sh "#{sparkle_bin} --ed-key-file \"#{ed_key_file}\" \"#{@output_dir}\""
+        ensure
+          File.delete(ed_key_file) if File.exist?(ed_key_file)
+        end
+      end
     else
       UI.error("Could not find Sparkle's appcast generation tool. Skipping appcast generation.")
     end

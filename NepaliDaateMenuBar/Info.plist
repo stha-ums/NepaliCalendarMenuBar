@@ -18,6 +18,8 @@
 	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>SUPublicEDKey</key>
+	<string>cr840ebdg7DqUZLKSmFnnZKcCuoj6WbaTSRk9c0jtWY=</string>
 	<key>SUFeedURL</key>
 	<string>https://github.com/stha-ums/NepaliCalendarMenuBar/releases/latest/download/appcast.xml</string>
 	<key>TelemetryAppID</key>

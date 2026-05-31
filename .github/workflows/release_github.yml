@@ -73,6 +73,7 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         run: |
           # Generate MATCH_GIT_BASIC_AUTHORIZATION from PAT
           export MATCH_GIT_BASIC_AUTHORIZATION=$(echo -n "stha-ums:${{ secrets.PAT }}" | base64)
