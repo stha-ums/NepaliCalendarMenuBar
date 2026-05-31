@@ -6,34 +6,68 @@ import Sparkle
 
 class UpdateManager: NSObject, ObservableObject {
     static let shared = UpdateManager()
-    
+
+    private static let checkIntervalSeconds: TimeInterval = 24 * 60 * 60 // 24 hours
+    private static let lastCheckKey = "LastUpdateCheckDate"
+
 #if SPARKLE
     private var updaterController: SPUStandardUpdaterController?
 #endif
-    
+    private var dailyCheckTimer: Timer?
+
     @Published var isAppStoreCheckEnabled: Bool {
         didSet {
             UserDefaults.standard.set(isAppStoreCheckEnabled, forKey: "AppStoreUpdateCheckEnabled")
             TelemetryManager.shared.track("settings.auto_update.changed", with: ["enabled": "\(isAppStoreCheckEnabled)", "type": "appstore"])
         }
     }
-    
+
     override init() {
         self.isAppStoreCheckEnabled = UserDefaults.standard.object(forKey: "AppStoreUpdateCheckEnabled") as? Bool ?? true
         super.init()
-        
+
 #if SPARKLE
-        // Initialize Sparkle
         updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
 #endif
-        
-        // Check for updates on launch if appropriate
+
         checkForUpdatesOnLaunch()
+        scheduleDailyCheck()
     }
-    
+
+    // MARK: - Scheduling
+
+    private func scheduleDailyCheck() {
+        // Fire every hour, but only actually check if 24h have elapsed.
+        // This way a long-running app catches the rollover without a persistent timer drift.
+        dailyCheckTimer = Timer.scheduledTimer(withTimeInterval: 60 * 60, repeats: true) { [weak self] _ in
+            self?.checkIfDue()
+        }
+        dailyCheckTimer?.tolerance = 5 * 60 // 5-minute tolerance saves energy
+    }
+
+    private func checkIfDue() {
+        let last = UserDefaults.standard.object(forKey: Self.lastCheckKey) as? Date ?? .distantPast
+        guard Date().timeIntervalSince(last) >= Self.checkIntervalSeconds else { return }
+        performSilentCheck()
+    }
+
+    private func performSilentCheck() {
+        UserDefaults.standard.set(Date(), forKey: Self.lastCheckKey)
+#if SPARKLE
+        // Ask Sparkle to check silently; it respects its own user preference for auto-checks.
+        updaterController?.updater.checkForUpdatesInBackground()
+#else
+        if isAppStoreCheckEnabled {
+            checkForAppStoreUpdates(silently: true)
+        }
+#endif
+    }
+
     private func checkForUpdatesOnLaunch() {
 #if SPARKLE
-        // Sparkle handles its own automatic checking based on user settings
+        // Sparkle handles its own automatic checking based on user settings.
+        // Also fire our daily check in case enough time has elapsed since last run.
+        checkIfDue()
 #else
         if isAppStoreCheckEnabled {
             checkForAppStoreUpdates(silently: true)
