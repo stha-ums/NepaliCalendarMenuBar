@@ -15,7 +15,7 @@ struct SettingsView: View {
 
     var body: some View {
         ScrollView(showsIndicators: false) {
-            VStack(spacing: 0) {
+            VStack(alignment: .leading, spacing: 0) {
                 // MARK: Appearance
                 SettingsSection(icon: "globe", title: "Language") {
                     HStack(spacing: 8) {
@@ -152,6 +152,34 @@ struct SettingsView: View {
                     .padding(10)
                     .background(Color(NSColor.controlBackgroundColor).opacity(0.5))
                     .cornerRadius(10)
+
+                    if hasCalendarAccess {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text("Internet Accounts")
+                                    .font(.system(size: 12, weight: .medium))
+                                Text("Add Google, iCloud, or Exchange calendars")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.secondary)
+                            }
+                            Spacer()
+                            Button {
+                                if let url = URL(string: "x-apple.systempreferences:com.apple.Internet-Accounts-Settings.extension") {
+                                    NSWorkspace.shared.open(url)
+                                }
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "arrow.up.right.square")
+                                        .font(.system(size: 10))
+                                    Text("Open")
+                                        .font(.system(size: 11, weight: .medium))
+                                }
+                            }
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
+                        }
+                        .padding(.top, 2)
+                    }
                 }
 
                 SettingsDivider()
@@ -215,7 +243,7 @@ struct SettingsView: View {
                 .padding(.vertical, 12)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 
     // MARK: - Helpers
@@ -377,7 +405,7 @@ struct SettingsToggleRow: View {
     @Binding var isOn: Bool
 
     var body: some View {
-        Toggle(isOn: $isOn) {
+        HStack {
             VStack(alignment: .leading, spacing: 1) {
                 Text(title)
                     .font(.system(size: 12, weight: .medium))
@@ -385,8 +413,11 @@ struct SettingsToggleRow: View {
                     .font(.system(size: 10))
                     .foregroundColor(.secondary)
             }
+            Spacer()
+            Toggle("", isOn: $isOn)
+                .toggleStyle(.switch)
+                .labelsHidden()
         }
-        .toggleStyle(.switch)
         .padding(.vertical, 2)
     }
 }

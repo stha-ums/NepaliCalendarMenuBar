@@ -137,6 +137,32 @@ class NepaliDateConverter {
         }
     }
 
+    /// Get localized Tithi name and whether it is from the vetted exception data
+    /// Returns (name, isOverridden) — isOverridden=true means official calendar data, false means predicted
+    static func getTithiInfo(for date: Date) -> (name: String, isOverridden: Bool)? {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day], from: date)
+
+        guard let year = components.year,
+              let month = components.month,
+              let day = components.day else {
+            return nil
+        }
+
+        let gDate = GregorianDate(year: Int32(year), month: UInt32(month), day: UInt32(day))
+        let location = Location(latitude: 27.7172, longitude: 85.3240)
+        let engineLang = mapLanguage(LanguageSettings.shared.language)
+
+        do {
+            let info = try engine.getDailyAstroInfo(date: gDate, location: location)
+            let name = try engine.getTithiName(tithi: info.tithi, lang: engineLang)
+            return (name: name, isOverridden: info.isOverridden)
+        } catch {
+            SentryManager.shared.captureError(error)
+            return nil
+        }
+    }
+
     /// Get localized Tithi name for any Gregorian date
     static func getTithiName(for date: Date) -> String? {
         let calendar = Calendar.current

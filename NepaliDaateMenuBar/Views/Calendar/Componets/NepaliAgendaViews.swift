@@ -8,6 +8,122 @@
 import SwiftUI
 import EventKit
 
+// MARK: - Agenda Empty State
+
+struct AgendaEmptyState: View {
+    let authorizationStatus: EKAuthorizationStatus
+    let onGrant: () -> Void
+
+    private var isNotDetermined: Bool { authorizationStatus == .notDetermined }
+    private var isDenied: Bool { authorizationStatus == .denied || authorizationStatus == .restricted }
+
+    var body: some View {
+        VStack(spacing: 16) {
+            // Icon
+            ZStack {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(iconColor.opacity(0.1))
+                    .frame(width: 56, height: 56)
+                Image(systemName: iconName)
+                    .font(.system(size: 24, weight: .medium))
+                    .foregroundStyle(iconColor)
+            }
+
+            // Text
+            VStack(spacing: 5) {
+                Text(title)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.primary)
+                Text(subtitle)
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            // Action
+            if isNotDetermined {
+                Button(action: onGrant) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "calendar.badge.plus")
+                            .font(.system(size: 11, weight: .semibold))
+                        Text("Connect Calendar")
+                            .font(.system(size: 12, weight: .semibold))
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.regular)
+            } else if isDenied {
+                Button {
+                    if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Calendars") {
+                        NSWorkspace.shared.open(url)
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.up.right.square")
+                            .font(.system(size: 11, weight: .semibold))
+                        Text("Open System Settings")
+                            .font(.system(size: 12, weight: .semibold))
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.regular)
+                .tint(.orange)
+            } else {
+                // Access granted but no events — offer Internet Accounts
+                Button {
+                    if let url = URL(string: "x-apple.systempreferences:com.apple.Internet-Accounts-Settings.extension") {
+                        NSWorkspace.shared.open(url)
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "person.crop.circle.badge.plus")
+                            .font(.system(size: 11, weight: .semibold))
+                        Text("Add Calendar Account")
+                            .font(.system(size: 12, weight: .semibold))
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.regular)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 32)
+        .padding(.vertical, 24)
+    }
+
+    private var iconName: String {
+        if isNotDetermined { return "calendar.badge.plus" }
+        if isDenied        { return "calendar.badge.exclamationmark" }
+        return "calendar.badge.checkmark"
+    }
+
+    private var iconColor: Color {
+        if isNotDetermined { return .accentColor }
+        if isDenied        { return .orange }
+        return .secondary
+    }
+
+    private var title: String {
+        if isNotDetermined { return "Connect Your Calendar" }
+        if isDenied        { return "Calendar Access Denied" }
+        return "No Upcoming Events"
+    }
+
+    private var subtitle: String {
+        if isNotDetermined { return "See your events alongside Nepali dates and tithi." }
+        if isDenied        { return "Enable calendar access in System Settings → Privacy & Security → Calendars." }
+        return "Events you create in the next 60 days will appear here."
+    }
+}
+
 // MARK: - Agenda Day Section (Google Calendar style)
 
 struct AgendaDaySection: View {

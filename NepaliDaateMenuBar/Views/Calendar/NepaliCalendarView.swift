@@ -285,9 +285,13 @@ struct NepaliCalendarView: View {
                         .id(agendaScrollAnchor)
                     
                     if sortedEventDays.isEmpty {
-                        Text("No upcoming events")
-                            .foregroundColor(.secondary)
-                            .padding(.top, 40)
+                        AgendaEmptyState(
+                            authorizationStatus: eventManager.authorizationStatus,
+                            onGrant: {
+                                Task { _ = await eventManager.requestAccess() }
+                            }
+                        )
+                        .padding(.top, 20)
                     } else {
                         ForEach(sortedEventDays, id: \.self) { day in
                             // Get events and date info for this day

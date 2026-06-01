@@ -162,7 +162,7 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
+			shellPath = /bin/bash;
 			shellScript = "if [[ ! \"$OTHER_SWIFT_FLAGS\" == *\"-D SPARKLE\"* ]]; then\n  FRAMEWORK_PATH=\"$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH/Sparkle.framework\"\n  if [ -d \"$FRAMEWORK_PATH\" ]; then\n    echo \"Found Sparkle framework at $FRAMEWORK_PATH. Removing for App Store build...\"\n    rm -rf \"$FRAMEWORK_PATH\"\n  else\n    echo \"Sparkle framework not found at $FRAMEWORK_PATH. Skipping removal.\"\n  fi\nfi\n";
 		};
 		33D079B32F1778E1009C25B5 /* Validate Telemetry Config */ = {
@@ -181,7 +181,7 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
+			shellPath = /bin/bash;
 			shellScript = "if [ -z \"$TELEMETRY_APP_ID\" ] || [ \"$TELEMETRY_APP_ID\" == \"your_app_id_here\" ]; then\n  echo \"warning: TELEMETRY_APP_ID is not set or using placeholder. Telemetry will be disabled. Update Secrets.xcconfig.\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */

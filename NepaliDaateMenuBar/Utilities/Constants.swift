@@ -18,6 +18,8 @@ enum Constants {
         static let onboardingHeight: CGFloat = 560
         static let aboutWidth: CGFloat = 480
         static let aboutHeight: CGFloat = 600
+        static let dateConverterWidth: CGFloat = 360
+        static let dateConverterHeight: CGFloat = 520
     }
     
     // MARK: - Schedule View

@@ -13,7 +13,7 @@ struct SettingsWindow: View {
     
     var body: some View {
         SettingsView(launchOnLoginManager: launchOnLoginManager, eventManager: eventManager)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }
 

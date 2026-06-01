@@ -18,6 +18,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var onboardingWindow: NSWindow?
     var settingsWindow: NSWindow?
     var aboutWindow: NSWindow?
+    var dateConverterWindow: NSWindow?
     private var cancellables = Set<AnyCancellable>()
     
     override init() {
@@ -111,7 +112,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private func createMenu() -> NSMenu {
         let menu = NSMenu()
         
-        menu.addItem(NSMenuItem(title: "Settings", action: #selector(openSettings), keyEquivalent: ","))
+        menu.addItem(NSMenuItem(title: "Settings", action: #selector(openSettings), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "Date Converter", action: #selector(openDateConverter), keyEquivalent: ""))
         menu.addItem(NSMenuItem(title: "About", action: #selector(openAbout), keyEquivalent: ""))
         
         #if DEBUG
@@ -262,6 +264,49 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         popover?.performClose(nil)
     }
     
+    @objc func openDateConverter() {
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { [weak self] in self?.openDateConverter() }
+            return
+        }
+
+        NSApp.activate(ignoringOtherApps: true)
+
+        if let existingWindow = dateConverterWindow, existingWindow.isVisible {
+            existingWindow.level = .floating
+            existingWindow.orderFrontRegardless()
+            existingWindow.makeKeyAndOrderFront(nil)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                existingWindow.level = .normal
+            }
+            popover?.performClose(nil)
+            return
+        }
+
+        let hostingController = NSHostingController(rootView: DateConverterView())
+        let window = NSWindow(contentViewController: hostingController)
+        window.title = "Date Converter"
+        window.styleMask = [.titled, .closable]
+        window.titlebarAppearsTransparent = false
+        window.isReleasedWhenClosed = false
+        window.setContentSize(NSSize(width: Constants.Window.dateConverterWidth, height: Constants.Window.dateConverterHeight))
+        window.standardWindowButton(.miniaturizeButton)?.isHidden = true
+        window.standardWindowButton(.zoomButton)?.isHidden = true
+        window.collectionBehavior = [.managed, .participatesInCycle]
+        window.center()
+        dateConverterWindow = window
+        window.delegate = self
+        window.level = .floating
+        window.orderFrontRegardless()
+        window.makeKeyAndOrderFront(nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            window.level = .normal
+        }
+        TelemetryManager.shared.track("window.date_converter.opened")
+        SentryManager.shared.trackNavigation(to: "date_converter_window")
+        popover?.performClose(nil)
+    }
+
     @objc func quitApp() {
         NSApplication.shared.terminate(nil)
     }
@@ -453,6 +498,8 @@ extension AppDelegate: NSWindowDelegate {
             settingsWindow = nil
         } else if window == aboutWindow {
             aboutWindow = nil
+        } else if window == dateConverterWindow {
+            dateConverterWindow = nil
         }
     }
 }
