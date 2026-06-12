@@ -2,8 +2,8 @@
 set -e
 
 # Configuration
-REPO_OWNER="CalNep"
-REPO_NAME="engine"
+REPO_OWNER="Yorion-io"
+REPO_NAME="yorion_engine"
 DEST_DIR="NepaliDaateMenuBar/Frameworks" # Directory where artifacts will be saved
 VERSION_FILE="$DEST_DIR/bs_calendar_version.txt"
 
