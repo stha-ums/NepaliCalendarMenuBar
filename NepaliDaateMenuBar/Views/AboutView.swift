@@ -17,22 +17,10 @@ struct AboutView: View {
                 )
 
                 VStack(spacing: 12) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 22, style: .continuous)
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color.accentColor, Color.accentColor.opacity(0.7)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                            .frame(width: 72, height: 72)
-                            .shadow(color: Color.accentColor.opacity(0.35), radius: 12, x: 0, y: 6)
-
-                        Image(systemName: "calendar")
-                            .font(.system(size: 34, weight: .semibold))
-                            .foregroundColor(.white)
-                    }
+                    Image(nsImage: NSApplication.shared.applicationIconImage)
+                        .resizable()
+                        .frame(width: 80, height: 80)
+                        .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
 
                     VStack(spacing: 4) {
                         Text("Yorion - BS Calendar")
