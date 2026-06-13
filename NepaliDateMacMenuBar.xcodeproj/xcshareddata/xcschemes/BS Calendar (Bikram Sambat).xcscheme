@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeCheck = "1610"
-   version = "1.3">
+   version = "1.8">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "338DD69E2ECA475400360807"
-               BuildableName = "BS Calendar (Bikram Sambat).app"
+               BuildableName = "Yorion - BS Calendar.app"
                BlueprintName = "BS Calendar (Bikram Sambat)"
                ReferencedContainer = "container:NepaliDateMacMenuBar.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "338DD69E2ECA475400360807"
-            BuildableName = "BS Calendar (Bikram Sambat).app"
+            BuildableName = "Yorion - BS Calendar.app"
             BlueprintName = "BS Calendar (Bikram Sambat)"
             ReferencedContainer = "container:NepaliDateMacMenuBar.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "338DD69E2ECA475400360807"
-            BuildableName = "BS Calendar (Bikram Sambat).app"
+            BuildableName = "Yorion - BS Calendar.app"
             BlueprintName = "BS Calendar (Bikram Sambat)"
             ReferencedContainer = "container:NepaliDateMacMenuBar.xcodeproj">
          </BuildableReference>
@@ -71,6 +71,10 @@
    <AnalyzeAction
       buildConfiguration = "Debug">
    </AnalyzeAction>
+   <ArchiveAction
+      buildConfiguration = "Release"
+      revealArchiveInOrganizer = "YES">
+   </ArchiveAction>
    <ArchivingAction
       buildConfiguration = "Release"
       revealArchiveInOrganizer = "YES">

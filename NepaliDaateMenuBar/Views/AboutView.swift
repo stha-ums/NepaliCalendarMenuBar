@@ -35,7 +35,7 @@ struct AboutView: View {
                     }
 
                     VStack(spacing: 4) {
-                        Text("BS Calendar")
+                        Text("Yorion - BS Calendar")
                             .font(.system(size: 22, weight: .bold))
 
                         Text("Bikram Sambat")
@@ -99,7 +99,7 @@ struct AboutView: View {
                     AboutDivider()
 
                     // Copyright
-                    Text("© 2026 BS Calendar · All rights reserved")
+                    Text("© 2026 Yorion · All rights reserved")
                         .font(.system(size: 10))
                         .foregroundColor(.secondary.opacity(0.6))
                         .padding(.vertical, 16)

@@ -30,7 +30,7 @@ class NepaliDateConverter {
         do {
             let bsDate = try engine.gregorianToBs(date: gDate)
             var nepaliDate = NepaliDate(year: Int(bsDate.year), month: Int(bsDate.month), day: Int(bsDate.day))
-            var calendar = Calendar(identifier: .gregorian)
+            let calendar = Calendar(identifier: .gregorian)
             if let date = calendar.date(from: DateComponents(year: year, month: month, day: day)) {
                 nepaliDate.tithi = getTithiName(for: date)
             }
@@ -67,7 +67,7 @@ class NepaliDateConverter {
     
     /// Get number of days in a Nepali month
     static func getDaysInMonth(year: Int, month: Int) -> Int {
-        let dummyLocation = Location(latitude: 27.7172, longitude: 85.3240) // Kathmandu
+        let dummyLocation = Location(latitude: 27.7172, longitude: 85.3240, name: "Kathmandu", timezoneOffsetMins: 345, followNepalSocialCalendar: true) // Kathmandu
         do {
             let monthData = try engine.getMonthCalendar(year: UInt16(year), month: UInt8(month), location: dummyLocation)
             return Int(monthData.daysInMonth)
@@ -81,7 +81,7 @@ class NepaliDateConverter {
     static func getMonthCalendarData(year: Int, month: Int) -> [CalendarDayInfo] {
         let appLang = LanguageSettings.shared.language
         let engineLang = mapLanguage(appLang)
-        let dummyLocation = Location(latitude: 27.7172, longitude: 85.3240)
+        let dummyLocation = Location(latitude: 27.7172, longitude: 85.3240, name: "Kathmandu", timezoneOffsetMins: 345, followNepalSocialCalendar: true)
         
         do {
             let monthData = try engine.getMonthCalendar(year: UInt16(year), month: UInt8(month), location: dummyLocation)
@@ -150,7 +150,7 @@ class NepaliDateConverter {
         }
 
         let gDate = GregorianDate(year: Int32(year), month: UInt32(month), day: UInt32(day))
-        let location = Location(latitude: 27.7172, longitude: 85.3240)
+        let location = Location(latitude: 27.7172, longitude: 85.3240, name: "Kathmandu", timezoneOffsetMins: 345, followNepalSocialCalendar: true)
         let engineLang = mapLanguage(LanguageSettings.shared.language)
 
         do {

@@ -328,21 +328,31 @@ struct NepaliCalendarView: View {
     // MARK: - Helpers
     
     private func previousPeriod() {
-        let calendar = Calendar.current
         if viewMode == .month {
-            currentDate = calendar.date(byAdding: .month, value: -1, to: currentDate) ?? currentDate
+            currentDate = stepBsMonth(from: currentDate, by: -1)
             SentryManager.shared.trackUserAction("previous_month")
         }
-        // No action needed for Agenda view
     }
-    
+
     private func nextPeriod() {
-        let calendar = Calendar.current
         if viewMode == .month {
-            currentDate = calendar.date(byAdding: .month, value: 1, to: currentDate) ?? currentDate
+            currentDate = stepBsMonth(from: currentDate, by: 1)
             SentryManager.shared.trackUserAction("next_month")
         }
-        // No action needed for Agenda view
+    }
+
+    // Navigate by one BS month instead of one Gregorian month.
+    // Returns a Gregorian date that falls in the target BS month (day 1).
+    private func stepBsMonth(from date: Date, by delta: Int) -> Date {
+        guard let bs = NepaliDateConverter.convertToNepali(gregorianDate: date) else { return date }
+        var newMonth = bs.month + delta
+        var newYear = bs.year
+        if newMonth > 12 { newMonth = 1; newYear += 1 }
+        if newMonth < 1  { newMonth = 12; newYear -= 1 }
+        guard let gregorian = NepaliDateConverter.convertNepaliToGregorian(
+            nepaliDate: NepaliDate(year: newYear, month: newMonth, day: 1)
+        ) else { return date }
+        return gregorian
     }
     
     

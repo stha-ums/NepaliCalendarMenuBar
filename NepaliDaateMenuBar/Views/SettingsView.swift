@@ -225,7 +225,7 @@ struct SettingsView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "power")
                             .font(.system(size: 12))
-                        Text("Quit BS Calendar")
+                        Text("Quit Yorion")
                             .font(.system(size: 12, weight: .medium))
                     }
                     .foregroundColor(.red)
